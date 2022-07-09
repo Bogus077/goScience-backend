@@ -1,0 +1,44 @@
+version: '3.3'
+
+services:
+  nginx:
+    container_name: quest-nginx
+    build:
+      context: .
+      dockerfile: docker/nginx.Dockerfile
+    ports:
+      - 3000:3000
+    depends_on:
+      - nodejs
+  nodejs:
+    entrypoint: [sh, -c, 'npm run dev']
+    hostname: 'nodejs'
+    container_name: granite-srv
+    build:
+      context: .
+      dockerfile: docker/node.Dockerfile
+    links:
+      - pgdb:pgdb
+    volumes:
+      - ./:/var/www/granite/
+    extra_hosts:
+      - 'smtp.yandex.ru:77.88.21.158'
+  pgdb:
+    image: postgres:alpine
+    container_name: granite-pgdb
+    restart: always
+    env_file: .env
+    # build:
+    #   context: .
+    #   dockerfile: docker/pg.Dockerfile
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    # ports:
+    #   - 5432:5432
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+volumes:
+  pgdata:
