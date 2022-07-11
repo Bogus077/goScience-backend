@@ -2,22 +2,26 @@ import { Request, Response } from 'express';
 import bcrypt from 'bcrypt';
 import { validateData, userSignUpRules, userLoginRules } from '../validationRules';
 import {sequelize} from '../../database/database.config';
-import { UserModel } from '../../models/index';
+import { User } from '../../models/index';
 import { createToken } from '../token';
 
-/** Registration for new User */
+/**
+ * Registration for new User 
+ * @param requestData 
+ * @returns 
+ */
 export const signUpNewUser = async (requestData: Request['body']) => {
   validateData(requestData, userSignUpRules);
 
   requestData.password = await bcrypt.hash(requestData.password, 8);
-  return await UserModel.create(requestData);
+  return await User.create(requestData);
 }
 
 /** LogIn: Check password and create access token */
 export const UserlogIn = async (requestData: Request['body']) => {
   validateData(requestData, userLoginRules);
 
-  const user = await UserModel.findOne({where: {phone: requestData.phone}})
+  const user = await User.findOne({where: {phone: requestData.phone}})
   if(!user){
     throw { errorMessage: 'User not found' };
   }
@@ -36,14 +40,14 @@ export const UserlogIn = async (requestData: Request['body']) => {
 }
 
 /** Compare password via database */
-export const checkPassword = async (password: string, user: typeof UserModel) => {
+export const checkPassword = async (password: string, user: typeof User) => {
   const isPasswordValid = await bcrypt.compare(password, user.password);
   if (!isPasswordValid) throw { errorMessage: `Invalid password` };
 }
 
 /** Check user phone number if it's already exists in DB */
 export const checkIsPhoneAlreadyExist = async (requestData: Request['body']) => {
-  const user = await UserModel.findOne({where: {phone: requestData.phone}});
+  const user = await User.findOne({where: {phone: requestData.phone}});
   if(!user){
     throw { errorMessage: 'User not found' };
   }

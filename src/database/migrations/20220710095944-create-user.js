@@ -1,39 +1,24 @@
 'use strict';
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable('AvailableKid', {
+    await queryInterface.createTable('User', {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER
       },
+      phone: {
+        type: Sequelize.STRING
+      },
+      password: {
+        type: Sequelize.STRING
+      },
       name: {
         type: Sequelize.STRING
       },
-      lastName: {
+      surname: {
         type: Sequelize.STRING
-      },
-      position: {
-        type: Sequelize.STRING
-      },
-      level: {
-        type: Sequelize.INTEGER
-      },
-      strength: {
-        type: Sequelize.INTEGER
-      },
-      agility: {
-        type: Sequelize.INTEGER
-      },
-      accuracy: {
-        type: Sequelize.INTEGER
-      },
-      intellect: {
-        type: Sequelize.INTEGER
-      },
-      speed: {
-        type: Sequelize.INTEGER
       },
       createdAt: {
         allowNull: false,
@@ -46,6 +31,6 @@ module.exports = {
     });
   },
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable('AvailableKid');
+    await queryInterface.dropTable('User');
   }
 };

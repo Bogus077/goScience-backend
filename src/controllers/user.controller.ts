@@ -2,9 +2,24 @@ import { Request, Response } from 'express'
 import bcrypt from 'bcrypt';
 import { validateData, userSignUpRules } from '../utils/validationRules';
 import {sequelize} from '../database/database.config';
-import { UserModel } from '../models/index';
+import { Class,  User } from '../models/index';
 import { checkIsPhoneAlreadyExist, signUpNewUser, UserlogIn } from '../utils/user';
 import { createToken } from '../utils/token';
+
+export async function getAllUsersRequest(req: Request, res: Response) {
+  try{
+    const result = await User.findAll({
+      attributes: { exclude: ['password'] },
+      include: {
+        model: Class,
+      }
+    });
+
+    res.status(200).send(result);
+  }catch(error){
+    res.status(500).send(error);
+  }
+}
 
 export async function signUpRequest(req: Request, res: Response) {
   try{

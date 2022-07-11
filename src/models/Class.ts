@@ -1,8 +1,8 @@
 const { sequelize } = require('../database/database.config');
 import { DataTypes as Sequelize } from "sequelize";
 
-export const User = sequelize.define(
-  'User',
+export const Class = sequelize.define(
+  'Class',
   {
     id: {
       allowNull: false,
@@ -10,18 +10,9 @@ export const User = sequelize.define(
       primaryKey: true,
       type: Sequelize.INTEGER
     },
-    phone: {
+    label: {
       type: Sequelize.STRING
     },
-    password: {
-      type: Sequelize.STRING
-    },
-    name: {
-      type: Sequelize.STRING
-    },
-    surname: {
-      type: Sequelize.STRING
-    }
   },
   {
     freezeTableName: true,

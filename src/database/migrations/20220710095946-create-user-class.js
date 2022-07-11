@@ -1,23 +1,15 @@
 'use strict';
+
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable('CompetitionAppl', {
+    await queryInterface.createTable('UserClass', {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      competition_id: {
-        allowNull: false,
-        type: Sequelize.INTEGER,
-        references: {
-          model: 'Competition',
-          key: 'id',
-        },
-        unique: false,
-      },
-      team_id: {
+      UserId: {
         allowNull: false,
         type: Sequelize.INTEGER,
         references: {
@@ -26,8 +18,14 @@ module.exports = {
         },
         unique: false,
       },
-      result: {
-        type: Sequelize.STRING
+      ClassId: {
+        allowNull: false,
+        type: Sequelize.INTEGER,
+        references: {
+          model: 'Class',
+          key: 'id',
+        },
+        unique: false,
       },
       createdAt: {
         allowNull: false,
@@ -40,6 +38,6 @@ module.exports = {
     });
   },
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable('CompetitionAppl');
+    await queryInterface.dropTable('UserClass');
   }
 };
