@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 import bcrypt from 'bcrypt';
 import { validateData, userSignUpRules, userLoginRules } from '../validationRules';
 import {sequelize} from '../../database/database.config';
-import { User } from '../../models/index';
+import { User, Class } from '../../models/index';
 import { createToken } from '../token';
 
 /**
@@ -12,6 +12,11 @@ import { createToken } from '../token';
  */
 export const signUpNewUser = async (requestData: Request['body']) => {
   validateData(requestData, userSignUpRules);
+
+  const isPhoneExist = await checkIsPhoneAlreadyExist(requestData.phone);
+  if(isPhoneExist.phoneExist){
+    throw { errorMessage: 'Телефон уже используется' };
+  }
 
   requestData.password = await bcrypt.hash(requestData.password, 8);
   return await User.create(requestData);
@@ -29,10 +34,6 @@ export const UserlogIn = async (requestData: Request['body']) => {
   await checkPassword(requestData.password, user);
 
   const logInResult = {
-    id: user.id,
-    name: user.name,
-    lastName: user.lastName,
-    phone: user.phone,
     accessToken: createToken(user),
   };
 
@@ -46,11 +47,16 @@ export const checkPassword = async (password: string, user: typeof User) => {
 }
 
 /** Check user phone number if it's already exists in DB */
-export const checkIsPhoneAlreadyExist = async (requestData: Request['body']) => {
-  const user = await User.findOne({where: {phone: requestData.phone}});
-  if(!user){
-    throw { errorMessage: 'User not found' };
+export const checkIsPhoneAlreadyExist = async (phone: string) => {
+  if(!phone){
+    throw { errorMessage: 'Телефон не указан' };
   }
 
-  return user.name;
+  const user = await User.findOne({where: {phone}});
+
+  // if(user){
+  //   throw { errorMessage: 'Телефон уже используется' };
+  // }
+
+  return {phoneExist: user ? user.id : false};
 }

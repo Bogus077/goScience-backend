@@ -2,7 +2,7 @@ version: '3.3'
 
 services:
   nginx:
-    container_name: quest-nginx
+    container_name: gs-nginx
     build:
       context: .
       dockerfile: docker/nginx.Dockerfile
@@ -13,7 +13,7 @@ services:
   nodejs:
     entrypoint: [sh, -c, 'npm run dev']
     hostname: 'nodejs'
-    container_name: granite-srv
+    container_name: gs-srv
     build:
       context: .
       dockerfile: docker/node.Dockerfile
@@ -25,7 +25,7 @@ services:
       - 'smtp.yandex.ru:77.88.21.158'
   pgdb:
     image: postgres:alpine
-    container_name: granite-pgdb
+    container_name: gs-pgdb
     restart: always
     env_file: .env
     # build:
