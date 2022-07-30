@@ -25,11 +25,20 @@ export const TasksDay = sequelize.define(
     status: {
       type: Sequelize.BOOLEAN,
     },
-    TaskgroupId: {
+    KidId: {
       allowNull: false,
       type: Sequelize.INTEGER,
       references: {
-        model: 'Taskgroup',
+        model: 'Kid',
+        key: 'id',
+      },
+      unique: false,
+    },
+    TasksWeekId: {
+      allowNull: true,
+      type: Sequelize.INTEGER,
+      references: {
+        model: 'TasksWeek',
         key: 'id',
       },
       unique: false,

@@ -14,6 +14,7 @@ const {
   POSTGRES_PORT,
   TOKEN_SECRET,
   TOKEN_EXPIRY_HOURS,
+  REFRESH_TOKEN_EXPIRY_HOURS,
   MAIL_USER,
   MAIL_PASSWORD,
   PASS_RESET,
@@ -44,6 +45,7 @@ const mailConfig = {
 };
 
 const jwtExpiryTime = parseInt(TOKEN_EXPIRY_HOURS) * 3600;
+const refreshExpiryTime = parseInt(REFRESH_TOKEN_EXPIRY_HOURS) * 3600;
 
 module.exports = {
   development: SQLConfig,
@@ -51,5 +53,6 @@ module.exports = {
   serverConfig: serverConfig,
   jwtSecret: TOKEN_SECRET,
   jwtExpiryTime,
+  refreshExpiryTime,
   mailConfig,
 };

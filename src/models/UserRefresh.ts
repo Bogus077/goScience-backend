@@ -1,8 +1,8 @@
 const { sequelize } = require('../database/database.config');
 import { DataTypes as Sequelize } from "sequelize";
 
-export const Taskgroup = sequelize.define(
-  'Taskgroup',
+export const UserRefresh = sequelize.define(
+  'UserRefresh',
   {
     id: {
       allowNull: false,
@@ -10,14 +10,20 @@ export const Taskgroup = sequelize.define(
       primaryKey: true,
       type: Sequelize.INTEGER
     },
-    KidId: {
+    UserId: {
       allowNull: false,
       type: Sequelize.INTEGER,
       references: {
-        model: 'Kid',
+        model: 'User',
         key: 'id',
       },
       unique: false,
+    },
+    refresh: {
+      type: Sequelize.STRING
+    },
+    used: {
+      type: Sequelize.BOOLEAN
     },
   },
   {

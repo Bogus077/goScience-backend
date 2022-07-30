@@ -19,17 +19,23 @@ export const TasksWeek = sequelize.define(
     date: {
       type: Sequelize.DATE,
     },
-    points: {
-      type: Sequelize.INTEGER,
-    },
     status: {
       type: Sequelize.BOOLEAN,
     },
-    TaskgroupId: {
+    KidId: {
       allowNull: false,
       type: Sequelize.INTEGER,
       references: {
-        model: 'Taskgroup',
+        model: 'Kid',
+        key: 'id',
+      },
+      unique: false,
+    },
+    TasksMonthId: {
+      allowNull: true,
+      type: Sequelize.INTEGER,
+      references: {
+        model: 'TasksMonth',
         key: 'id',
       },
       unique: false,

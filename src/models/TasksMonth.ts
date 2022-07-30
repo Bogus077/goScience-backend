@@ -1,8 +1,8 @@
 const { sequelize } = require('../database/database.config');
 import { DataTypes as Sequelize } from "sequelize";
 
-export const TasksQuarter = sequelize.define(
-  'TasksQuarter',
+export const TasksMonth = sequelize.define(
+  'TasksMonth',
   {
     id: {
       allowNull: false,
@@ -27,6 +27,15 @@ export const TasksQuarter = sequelize.define(
       type: Sequelize.INTEGER,
       references: {
         model: 'Kid',
+        key: 'id',
+      },
+      unique: false,
+    },
+    TasksQuarterId: {
+      allowNull: true,
+      type: Sequelize.INTEGER,
+      references: {
+        model: 'TasksQuarter',
         key: 'id',
       },
       unique: false,

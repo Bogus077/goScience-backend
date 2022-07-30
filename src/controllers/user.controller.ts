@@ -2,11 +2,12 @@ import { Request, Response } from 'express'
 import bcrypt from 'bcrypt';
 import { validateData, userSignUpRules } from '../utils/validationRules';
 import {sequelize} from '../database/database.config';
-import { Class,  Kid,  Taskgroup,  TasksDay,  TasksQuarter,  TasksWeek,  User, UserSettings } from '../models/index';
+import { Class,  Kid,  TasksDay,  TasksMonth,  TasksQuarter,  TasksWeek,  User, UserSettings } from '../models/index';
 import { checkIsPhoneAlreadyExist, signUpNewUser, UserlogIn } from '../utils/user';
-import { createToken } from '../utils/token';
+import { createRefreshToken, createToken } from '../utils/token';
+import { JwtPayload } from 'src/middlewares/authJwt';
 
-export async function getAllUsersRequest(req: Request & {jwt: any}, res: Response) {
+export async function getAllUsersRequest(req: Request & {jwt: JwtPayload}, res: Response) {
   try{
     const result = await User.findAll({
       attributes: { exclude: ['password'] },
@@ -14,7 +15,6 @@ export async function getAllUsersRequest(req: Request & {jwt: any}, res: Respons
         model: Class,
       }
     });
-    console.log(req.jwt);
 
     res.status(200).send(result);
   }catch(error){
@@ -22,7 +22,7 @@ export async function getAllUsersRequest(req: Request & {jwt: any}, res: Respons
   }
 }
 
-export async function getUserRequest(req: Request & {jwt: any}, res: Response) {
+export async function getUserRequest(req: Request & {jwt: JwtPayload}, res: Response) {
   try{
     const result = await User.findOne({ 
       where: {id: req.jwt.id},
@@ -34,16 +34,18 @@ export async function getUserRequest(req: Request & {jwt: any}, res: Response) {
             model: Class, 
             include: {
               model: Kid,
-              include: {
-                model: Taskgroup,
-                include: [TasksDay, TasksWeek, TasksQuarter]
-              }
+              include:  [TasksDay, TasksWeek, TasksMonth, TasksQuarter]
             }
           }
         },
         {model: Class}
       ]
     });
+
+    if(!result){
+      res.status(401).send({error: {message: 'User not found', status: 151} });
+      return;
+    }
 
     res.status(200).send(result);
   }catch(error){
@@ -60,6 +62,7 @@ export async function signUpRequest(req: Request, res: Response) {
       surname: createdUser.surname,
       phone: createdUser.phone,
       accessToken: createToken(createdUser),
+      refreshToken: createRefreshToken(createdUser),
     }
 
     res.status(200).send(result);

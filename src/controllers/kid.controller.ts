@@ -2,15 +2,13 @@ import { Request, Response } from 'express'
 import bcrypt from 'bcrypt';
 import { validateData } from '../utils/validationRules';
 import {sequelize} from '../database/database.config';
-import { Kid, Class, Taskgroup } from '../models/index';
+import { Kid, Class } from '../models/index';
 import { createNewKid, isKidBelongsToUser, removeKid, updateKid } from '../utils/kid/kid';
 import { JwtPayload } from 'src/middlewares/authJwt';
 
 export async function getAllKidsRequest(req: Request, res: Response) {
   try{
     const result = await Kid.findAll({include: [{
-      model: Taskgroup
-    }, {
       model: Class
     }]});
 

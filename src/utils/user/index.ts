@@ -3,7 +3,7 @@ import bcrypt from 'bcrypt';
 import { validateData, userSignUpRules, userLoginRules } from '../validationRules';
 import {sequelize} from '../../database/database.config';
 import { User, Class } from '../../models/index';
-import { createToken } from '../token';
+import { createRefreshToken, createToken } from '../token';
 
 /**
  * Registration for new User 
@@ -35,6 +35,7 @@ export const UserlogIn = async (requestData: Request['body']) => {
 
   const logInResult = {
     accessToken: createToken(user),
+    refreshToken: await createRefreshToken(user),
   };
 
   return logInResult;

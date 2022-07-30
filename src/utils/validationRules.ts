@@ -61,9 +61,7 @@ export const createTaskgroupRules = {
 }
 
 export const createTaskRules = {
-  TaskgroupId: 'integer|required',
+  KidId: 'integer|required',
   label: 'string|required',
-  description: 'string|required',
-  points: 'integer|required',
   status: 'boolean|required',
 }

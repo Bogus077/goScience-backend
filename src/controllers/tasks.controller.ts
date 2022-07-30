@@ -2,8 +2,10 @@ import { Request, Response } from 'express'
 import bcrypt from 'bcrypt';
 import { validateData } from '../utils/validationRules';
 import {sequelize} from '../database/database.config';
-import { Taskgroup, TasksDay, TasksWeek, TasksQuarter } from '../models/index';
-import { getKidTasks, createTaskGroup, createTask } from '../utils/tasks/tasks';
+import { TasksDay, TasksWeek, TasksQuarter } from '../models/index';
+import { getKidTasks, createTask } from '../utils/tasks/tasks';
+import { JwtPayload } from '../middlewares/authJwt';
+import { getCurrentClass } from '../utils/class';
 
 export async function getAllTasksRequest(req: Request, res: Response) {
   try{
@@ -15,9 +17,9 @@ export async function getAllTasksRequest(req: Request, res: Response) {
   }
 }
 
-export async function createNewTaskGroupRequest(req: Request, res: Response) {
+export async function createNewDayTaskRequest(req: Request & {jwt: JwtPayload}, res: Response) {
   try{
-    const result = await createTaskGroup(req.body);
+    const result = await createTask(req.body, 'day', req.jwt.id);
 
     res.status(200).send(result);
   }catch(error){
@@ -25,9 +27,9 @@ export async function createNewTaskGroupRequest(req: Request, res: Response) {
   }
 }
 
-export async function createNewDayTaskRequest(req: Request, res: Response) {
+export async function createNewWeekTaskRequest(req: Request & {jwt: JwtPayload}, res: Response) {
   try{
-    const result = await createTask(req.body, 'day');
+    const result = await createTask(req.body, 'week', req.jwt.id);
 
     res.status(200).send(result);
   }catch(error){
@@ -35,9 +37,9 @@ export async function createNewDayTaskRequest(req: Request, res: Response) {
   }
 }
 
-export async function createNewWeekTaskRequest(req: Request, res: Response) {
+export async function createNewMonthTaskRequest(req: Request & {jwt: JwtPayload}, res: Response) {
   try{
-    const result = await createTask(req.body, 'week');
+    const result = await createTask(req.body, 'month', req.jwt.id);
 
     res.status(200).send(result);
   }catch(error){
@@ -45,9 +47,9 @@ export async function createNewWeekTaskRequest(req: Request, res: Response) {
   }
 }
 
-export async function createNewQuarterTaskRequest(req: Request, res: Response) {
+export async function createNewQuarterTaskRequest(req: Request & {jwt: JwtPayload}, res: Response) {
   try{
-    const result = await createTask(req.body, 'quarter');
+    const result = await createTask(req.body, 'quarter', req.jwt.id);
 
     res.status(200).send(result);
   }catch(error){

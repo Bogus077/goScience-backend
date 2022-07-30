@@ -6,6 +6,8 @@ import { validateData, createKidRules, updateKidRules, kidPhoneRules, removeKidR
 export const isKidBelongsToUser = async (userId: number, kidId: number) => {
 
   const kid = await Kid.findOne({where: {id: kidId}, include: {model: Class, include: {model: User}}});
+  if(!kid) throw { errorMessage: 'Ученик не найден' };
+  
   const users = kid.Class.Users.map((user: typeof User) => user.id);
 
   const isBelongs = users.includes(userId);

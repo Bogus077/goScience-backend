@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { Class, User, UserClass, UserSettings } from '../../models';
+import { Class, Kid, TasksDay, TasksMonth, TasksQuarter, TasksWeek, User, UserClass, UserSettings } from '../../models';
 import { validateData, createClassRules, changeClassRules } from '../validationRules';
 
 export const isClassBelongsToUser = async (UserId: number, ClassId: number) => {
@@ -37,6 +37,28 @@ export const changeClass = async (requestData: Request['body'], UserId: number) 
   await isClassBelongsToUser(UserId, ClassId);
   const userSettings = await UserSettings.findOne({where: {UserId}});
   const result = await userSettings.update({ClassId: ClassId})
+
+  return result;
+}
+
+export const getCurrentClass = async (UserId: number) => {
+
+  const result = await UserSettings.findOne({
+    where: UserId, 
+    include: [{
+      model: Class, 
+      include: [{
+        model: Kid,
+        include: [TasksDay, TasksWeek, TasksMonth, TasksQuarter]
+      }]
+    }],
+    order: [
+      [Class, Kid, TasksDay, 'id', 'asc'],
+      [Class, Kid, TasksWeek, 'id', 'asc'],
+      [Class, Kid, TasksMonth, 'id', 'asc'],
+      [Class, Kid, TasksQuarter, 'id', 'asc']
+    ]
+  });
 
   return result;
 }

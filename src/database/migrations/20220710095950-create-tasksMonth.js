@@ -1,7 +1,7 @@
 'use strict';
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable('TasksQuarter', {
+    await queryInterface.createTable('TasksMonth', {
       id: {
         allowNull: false,
         autoIncrement: true,
@@ -17,17 +17,23 @@ module.exports = {
       date: {
         type: Sequelize.DATE,
       },
-      points: {
-        type: Sequelize.INTEGER,
-      },
       status: {
         type: Sequelize.BOOLEAN,
       },
-      TaskgroupId: {
+      KidId: {
         allowNull: false,
         type: Sequelize.INTEGER,
         references: {
-          model: 'Taskgroup',
+          model: 'Kid',
+          key: 'id',
+        },
+        unique: false,
+      },
+      TasksQuarterId: {
+        allowNull: true,
+        type: Sequelize.INTEGER,
+        references: {
+          model: 'TasksQuarter',
           key: 'id',
         },
         unique: false,
@@ -43,6 +49,6 @@ module.exports = {
     });
   },
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable('TasksQuarter');
+    await queryInterface.dropTable('TasksMonth');
   }
 };
