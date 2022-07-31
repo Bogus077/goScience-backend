@@ -19,6 +19,10 @@ export const TasksQuarter = sequelize.define(
     date: {
       type: Sequelize.DATE,
     },
+    points: {
+      type: Sequelize.INTEGER,
+      defaultValue: 0,
+    },
     status: {
       type: Sequelize.BOOLEAN,
     },

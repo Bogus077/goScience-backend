@@ -43,13 +43,18 @@ export const changeClass = async (requestData: Request['body'], UserId: number) 
 
 export const getCurrentClass = async (UserId: number) => {
 
-  const result = await UserSettings.findOne({
+  const currentClass = await UserSettings.findOne({
     where: UserId, 
     include: [{
       model: Class, 
       include: [{
         model: Kid,
-        include: [TasksDay, TasksWeek, TasksMonth, TasksQuarter]
+        include: [
+          TasksDay, 
+          TasksWeek, 
+          TasksMonth, 
+          TasksQuarter
+        ]
       }]
     }],
     order: [
@@ -60,5 +65,5 @@ export const getCurrentClass = async (UserId: number) => {
     ]
   });
 
-  return result;
+  return currentClass;
 }

@@ -19,6 +19,7 @@ module.exports = {
       },
       points: {
         type: Sequelize.INTEGER,
+        defaultValue: 0,
       },
       status: {
         type: Sequelize.BOOLEAN,
