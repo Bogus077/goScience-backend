@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import { TasksDay, TasksWeek, TasksQuarter, TasksMonth, Kid, UserSettings, Class } from '../../models';
 import { isKidBelongsToUser } from '../kid/kid';
 import { validateData, getTasksRules, createTaskgroupRules, createTaskRules } from '../validationRules';
+import { v4 as uuidv4 } from 'uuid';
 
 export const updatePointsMonth = async (TasksQuarterId: number, points: number, type: 'add' | 'remove') => {
   if(!TasksQuarterId || !points) return;
@@ -49,9 +50,10 @@ export const createTask = async (requestData: Request['body'], type: 'day' | 'we
   if(!kid) throw { errorMessage: 'Ученик не найден' };
 
   await isKidBelongsToUser(UserId, kid.id);
+  const taskgroupId = uuidv4();
 
   if(type === 'day'){
-    const task = await TasksDay.create({...requestData, points: requestData.points ?? 1});
+    const task = await TasksDay.create({...requestData, points: requestData.points ?? 1, taskgroupId});
     if(task.TasksWeekId){
     await updatePointsDay(task.TasksWeekId, task.points, 'add');
   }
@@ -59,15 +61,15 @@ export const createTask = async (requestData: Request['body'], type: 'day' | 'we
     return task;
   }
   if(type === 'week'){
-    const task = await TasksWeek.create(requestData);
+    const task = await TasksWeek.create({...requestData, taskgroupId});
     return task;
   }
   if(type === 'month'){
-    const task = await TasksMonth.create(requestData);
+    const task = await TasksMonth.create({...requestData, taskgroupId});
     return task;
   }
   if(type === 'quarter'){
-    const task = await TasksQuarter.create(requestData);
+    const task = await TasksQuarter.create({...requestData, taskgroupId});
     return task;
   }  
 }

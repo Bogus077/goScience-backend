@@ -24,6 +24,10 @@ module.exports = {
       status: {
         type: Sequelize.BOOLEAN,
       },
+      taskgroupId: {
+        allowNull: false,
+        type: Sequelize.STRING
+      },
       KidId: {
         allowNull: false,
         type: Sequelize.INTEGER,
