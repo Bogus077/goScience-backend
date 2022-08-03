@@ -61,7 +61,17 @@ export const createTaskgroupRules = {
 }
 
 export const createTaskRules = {
-  KidId: 'integer|required',
   label: 'string|required',
   status: 'boolean|required',
+}
+
+export const changeTaskStatusRules = {
+  type: 'string|required',
+  status: 'boolean|required',
+  id: 'integer|required',
+}
+
+export const removeTaskRules = {
+  type: 'string|required',
+  id: 'integer|required',
 }
