@@ -46,6 +46,9 @@ module.exports = {
         },
         unique: false,
       },
+      isDeleted: {
+        type: Sequelize.BOOLEAN,
+      },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE

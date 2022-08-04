@@ -48,6 +48,9 @@ export const TasksWeek = sequelize.define(
       },
       unique: false,
     },
+    isDeleted: {
+      type: Sequelize.BOOLEAN,
+    },
   },
   {
     freezeTableName: true,

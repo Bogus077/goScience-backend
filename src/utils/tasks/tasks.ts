@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { TasksDay, TasksWeek, TasksQuarter, TasksMonth, Kid, UserSettings, Class } from '../../models';
+import { TasksDay, TasksWeek, TasksQuarter, TasksMonth, Kid, UserSettings, Class, StatsTask } from '../../models';
 import { isKidBelongsToUser } from '../kid/kid';
 import { validateData, getTasksRules, createTaskgroupRules, createTaskRules, changeTaskStatusRules, removeTaskRules } from '../validationRules';
 import { v4 as uuidv4 } from 'uuid';
@@ -237,8 +237,13 @@ export const changeTaskStatus = async (requestData: Request['body'], UserId: num
       
       if(requestData.status === true && taskDay.status === false && taskDay.TasksWeekId){
         await updatePointsDay(taskDay.TasksWeekId, taskDay.points, 'remove');
+
+        await StatsTask.create({UserId, KidId: taskDay.KidId, TasksDayId: taskDay.id, points: taskDay.points});
       }else if (requestData.status === false && taskDay.status === true){
         await updatePointsDay(taskDay.TasksWeekId, taskDay.points, 'add');
+
+        const statsToDelete = await StatsTask.findOne({where: {TasksDayId: taskDay.id}});
+        if(statsToDelete) await statsToDelete.destroy();
       }
 
       return await taskDay.update({status: requestData.status});
@@ -279,25 +284,25 @@ export const removeTask = async (requestData: Request['body'], UserId: number) =
       if(!taskWeek) throw { errorMessage: 'Задание не найдено' };
       await isKidBelongsToUser(UserId, taskWeek.KidId);
 
-      if(taskWeek.status === false && taskWeek.TasksMonthId){
-        await updatePointsWeek(taskWeek.TasksMonthId, taskWeek.points, 'remove');
-      }
+      // if(taskWeek.status === false && taskWeek.TasksMonthId){
+      //   await updatePointsWeek(taskWeek.TasksMonthId, taskWeek.points, 'remove');
+      // }
 
-      return await taskWeek.destroy();
+      return await taskWeek.update({isDeleted: true});
     case "month":
       const taskMonth = await TasksMonth.findOne({where: {id: requestData.id}})
       if(!taskMonth) throw { errorMessage: 'Задание не найдено' };
       await isKidBelongsToUser(UserId, taskMonth.KidId);
 
-      if(taskMonth.status === false && taskMonth.TasksQuarterId){
-        await updatePointsWeek(taskMonth.TasksQuarterId, taskMonth.points, 'remove');
-      }
+      // if(taskMonth.status === false && taskMonth.TasksQuarterId){
+      //   await updatePointsWeek(taskMonth.TasksQuarterId, taskMonth.points, 'remove');
+      // }
 
-      return await taskMonth.destroy();
+      return await taskMonth.update({isDeleted: true});
     case "quarter":
       const taskQuarter = await TasksQuarter.findOne({where: {id: requestData.id}})
       if(!taskQuarter) throw { errorMessage: 'Задание не найдено' };
       await isKidBelongsToUser(UserId, taskQuarter.KidId);
-      return await taskQuarter.destroy();
+      return await taskQuarter.update({isDeleted: true});
   }
 }

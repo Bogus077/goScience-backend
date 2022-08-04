@@ -1,32 +1,21 @@
 'use strict';
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable('TasksQuarter', {
+    await queryInterface.createTable('StatsTask', {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      label: {
-        type: Sequelize.STRING
-      },
-      description: {
-        type: Sequelize.STRING
-      },
-      date: {
-        type: Sequelize.DATE,
-      },
-      points: {
-        type: Sequelize.INTEGER,
-        defaultValue: 0,
-      },
-      status: {
-        type: Sequelize.BOOLEAN,
-      },
-      taskgroupId: {
+      UserId: {
         allowNull: false,
-        type: Sequelize.STRING
+        type: Sequelize.INTEGER,
+        references: {
+          model: 'User',
+          key: 'id',
+        },
+        unique: false,
       },
       KidId: {
         allowNull: false,
@@ -37,8 +26,21 @@ module.exports = {
         },
         unique: false,
       },
-      isDeleted: {
-        type: Sequelize.BOOLEAN,
+      TasksDayId: {
+        allowNull: false,
+        type: Sequelize.INTEGER,
+        references: {
+          model: 'TasksDay',
+          key: 'id',
+        },
+        unique: false,
+      },
+      points: {
+        type: Sequelize.INTEGER,
+        defaultValue: 0,
+      },
+      status: {
+        type: Sequelize.BOOLEAN
       },
       createdAt: {
         allowNull: false,
@@ -51,6 +53,6 @@ module.exports = {
     });
   },
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable('TasksQuarter');
+    await queryInterface.dropTable('StatsTask');
   }
 };

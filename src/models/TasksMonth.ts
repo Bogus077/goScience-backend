@@ -48,6 +48,9 @@ export const TasksMonth = sequelize.define(
       },
       unique: false,
     },
+    isDeleted: {
+      type: Sequelize.BOOLEAN,
+    },
   },
   {
     freezeTableName: true,

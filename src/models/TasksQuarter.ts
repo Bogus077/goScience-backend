@@ -39,6 +39,9 @@ export const TasksQuarter = sequelize.define(
       },
       unique: false,
     },
+    isDeleted: {
+      type: Sequelize.BOOLEAN,
+    },
   },
   {
     freezeTableName: true,

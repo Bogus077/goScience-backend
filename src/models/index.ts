@@ -9,8 +9,9 @@ import { TasksMonth } from './TasksMonth';
 import { TasksQuarter } from './TasksQuarter';
 import { UserSettings } from './UserSettings';
 import { UserRefresh } from './UserRefresh';
+import { StatsTask } from './StatsTask';
 
-export {User, Class, UserClass, Kid, TasksDay, TasksWeek, TasksMonth, TasksQuarter, UserSettings, UserRefresh};
+export {User, Class, UserClass, Kid, TasksDay, TasksWeek, TasksMonth, TasksQuarter, UserSettings, UserRefresh, StatsTask};
 
 User.hasMany(UserRefresh);
 UserRefresh.belongsTo(User);
@@ -34,3 +35,10 @@ TasksQuarter.belongsTo(Kid);
 
 User.belongsToMany(Class, {through: UserClass});
 Class.belongsToMany(User, {through: UserClass});
+
+User.hasMany(StatsTask);
+StatsTask.belongsTo(User);
+Kid.hasMany(StatsTask);
+StatsTask.belongsTo(Kid);
+TasksDay.hasOne(StatsTask);
+StatsTask.belongsTo(TasksDay);

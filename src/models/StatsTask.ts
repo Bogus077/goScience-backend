@@ -1,8 +1,8 @@
 const { sequelize } = require('../database/database.config');
 import { DataTypes as Sequelize } from "sequelize";
 
-export const TasksDay = sequelize.define(
-  'TasksDay',
+export const StatsTask = sequelize.define(
+  'StatsTask',
   {
     id: {
       allowNull: false,
@@ -10,25 +10,14 @@ export const TasksDay = sequelize.define(
       primaryKey: true,
       type: Sequelize.INTEGER
     },
-    label: {
-      type: Sequelize.STRING
-    },
-    description: {
-      type: Sequelize.STRING
-    },
-    date: {
-      type: Sequelize.DATE,
-    },
-    points: {
-      type: Sequelize.INTEGER,
-      defaultValue: 0,
-    },
-    status: {
-      type: Sequelize.BOOLEAN,
-    },
-    taskgroupId: {
+    UserId: {
       allowNull: false,
-      type: Sequelize.STRING
+      type: Sequelize.INTEGER,
+      references: {
+        model: 'User',
+        key: 'id',
+      },
+      unique: false,
     },
     KidId: {
       allowNull: false,
@@ -39,17 +28,21 @@ export const TasksDay = sequelize.define(
       },
       unique: false,
     },
-    TasksWeekId: {
-      allowNull: true,
+    TasksDayId: {
+      allowNull: false,
       type: Sequelize.INTEGER,
       references: {
-        model: 'TasksWeek',
+        model: 'TasksDay',
         key: 'id',
       },
       unique: false,
     },
-    isDeleted: {
-      type: Sequelize.BOOLEAN,
+    points: {
+      type: Sequelize.INTEGER,
+      defaultValue: 0,
+    },
+    status: {
+      type: Sequelize.BOOLEAN
     },
   },
   {

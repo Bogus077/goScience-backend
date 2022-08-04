@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { Class, Kid, TasksDay, TasksMonth, TasksQuarter, TasksWeek, User, UserClass, UserSettings } from '../../models';
+import { Class, Kid, StatsTask, TasksDay, TasksMonth, TasksQuarter, TasksWeek, User, UserClass, UserSettings } from '../../models';
 import { validateData, createClassRules, changeClassRules } from '../validationRules';
 
 export const isClassBelongsToUser = async (UserId: number, ClassId: number) => {
@@ -53,11 +53,13 @@ export const getCurrentClass = async (UserId: number) => {
           TasksDay, 
           TasksWeek, 
           TasksMonth, 
-          TasksQuarter
+          TasksQuarter,
+          StatsTask,
         ]
       }]
     }],
     order: [
+      [Class, Kid, 'id', 'asc'],
       [Class, Kid, TasksDay, 'id', 'asc'],
       [Class, Kid, TasksWeek, 'id', 'asc'],
       [Class, Kid, TasksMonth, 'id', 'asc'],
