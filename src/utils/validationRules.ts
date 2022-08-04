@@ -75,3 +75,24 @@ export const removeTaskRules = {
   type: 'string|required',
   id: 'integer|required',
 }
+
+export const createTeamRules = {
+  label: 'string|required',
+}
+
+export const updateTeamRules = {
+  id: 'integer|required',
+  label: 'string|required',
+}
+
+export const removeTeamRules = {
+  id: 'integer|required',
+}
+
+export const addKidToTeamRules = {
+  TeamId: 'integer|required',
+}
+
+export const removeKidFromTeamRules = {
+  TeamId: 'integer|required',
+}

@@ -10,8 +10,30 @@ import { TasksQuarter } from './TasksQuarter';
 import { UserSettings } from './UserSettings';
 import { UserRefresh } from './UserRefresh';
 import { StatsTask } from './StatsTask';
+import { Team } from './Team';
+import { KidTeam } from './KidTeam';
+import { Project } from './Project';
+import { ProjectTask } from './ProjectTask';
+import { KidProjectTask } from './KidProjectTask';
 
-export {User, Class, UserClass, Kid, TasksDay, TasksWeek, TasksMonth, TasksQuarter, UserSettings, UserRefresh, StatsTask};
+export {
+  User, 
+  Class, 
+  UserClass, 
+  Kid, 
+  TasksDay, 
+  TasksWeek,
+  TasksMonth,
+  TasksQuarter,
+  UserSettings,
+  UserRefresh,
+  StatsTask,
+  Team,
+  KidTeam,
+  Project,
+  ProjectTask,
+  KidProjectTask,
+};
 
 User.hasMany(UserRefresh);
 UserRefresh.belongsTo(User);
@@ -36,9 +58,28 @@ TasksQuarter.belongsTo(Kid);
 User.belongsToMany(Class, {through: UserClass});
 Class.belongsToMany(User, {through: UserClass});
 
+//Stats
 User.hasMany(StatsTask);
 StatsTask.belongsTo(User);
 Kid.hasMany(StatsTask);
 StatsTask.belongsTo(Kid);
 TasksDay.hasOne(StatsTask);
 StatsTask.belongsTo(TasksDay);
+
+//Projects
+Kid.belongsToMany(Team, {through: KidTeam});
+Team.belongsToMany(Kid, {through: KidTeam});
+
+Project.belongsTo(Team);
+Team.hasMany(Project);
+
+ProjectTask.belongsTo(Project);
+Project.hasMany(ProjectTask);
+
+Kid.belongsToMany(ProjectTask, {through: KidProjectTask});
+ProjectTask.belongsToMany(Kid, {through: KidProjectTask});
+
+User.hasMany(Team);
+Team.belongsTo(User);
+User.hasMany(Project);
+Project.belongsTo(User);
