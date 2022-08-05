@@ -1,14 +1,19 @@
 import { Request, Response } from 'express'
-import { Kid, Team } from '../models/index';
+import { Kid, Project, ProjectTask, Team } from '../models/index';
 import { JwtPayload } from '../middlewares/authJwt';
-import { addKidToTeam, createTeam, removeKidFromTeam, removeTeam, updateTeam } from '../utils/teams/teams';
+import { addKidToProjectTask, createProject, createProjectTask, removeProject, removeProjectTask, updateProject, updateProjectTask } from '../utils/project/project';
 
-export async function getUserTeamsRequest(req: Request & {jwt: JwtPayload}, res: Response) {
+export async function getUserProjectsRequest(req: Request & {jwt: JwtPayload}, res: Response) {
   try{
-    const result = await Team.findAll({
+    const result = await Project.findAll({
       where: {UserId: req.jwt.id, isDeleted: null},
       attributes: { exclude: ['isDeleted'] },
-      include: [Kid]
+      include: [{
+        model: ProjectTask,
+        where: { isDeleted: null },
+        include: [Kid],
+        required: false,
+      }]
     });
 
     res.status(200).send(result);
@@ -17,9 +22,9 @@ export async function getUserTeamsRequest(req: Request & {jwt: JwtPayload}, res:
   }
 }
 
-export async function createTeamRequest(req: Request & {jwt: JwtPayload}, res: Response) {
+export async function createProjectRequest(req: Request & {jwt: JwtPayload}, res: Response) {
   try{
-    const result = await createTeam(req.body, req.jwt.id);
+    const result = await createProject(req.body, req.jwt.id);
 
     res.status(200).send(result);
   }catch(error){
@@ -27,9 +32,9 @@ export async function createTeamRequest(req: Request & {jwt: JwtPayload}, res: R
   }
 }
 
-export async function updateTeamRequest(req: Request & {jwt: JwtPayload}, res: Response) {
+export async function updateProjectRequest(req: Request & {jwt: JwtPayload}, res: Response) {
   try{
-    const result = await updateTeam(req.body, req.jwt.id);
+    const result = await updateProject(req.body, req.jwt.id);
 
     res.status(200).send(result);
   }catch(error){
@@ -37,9 +42,9 @@ export async function updateTeamRequest(req: Request & {jwt: JwtPayload}, res: R
   }
 }
 
-export async function removeTeamRequest(req: Request & {jwt: JwtPayload}, res: Response) {
+export async function removeProjectRequest(req: Request & {jwt: JwtPayload}, res: Response) {
   try{
-    const result = await removeTeam(req.body, req.jwt.id);
+    const result = await removeProject(req.body, req.jwt.id);
 
     res.status(200).send(result);
   }catch(error){
@@ -47,9 +52,11 @@ export async function removeTeamRequest(req: Request & {jwt: JwtPayload}, res: R
   }
 }
 
-export async function addKidToTeamRequest(req: Request & {jwt: JwtPayload}, res: Response) {
+//ProjectTasks
+
+export async function createProjectTaskRequest(req: Request & {jwt: JwtPayload}, res: Response) {
   try{
-    const result = await addKidToTeam(req.body, req.jwt.id);
+    const result = await createProjectTask(req.body, req.jwt.id);
 
     res.status(200).send(result);
   }catch(error){
@@ -57,9 +64,29 @@ export async function addKidToTeamRequest(req: Request & {jwt: JwtPayload}, res:
   }
 }
 
-export async function removeKidFromTeamRequest(req: Request & {jwt: JwtPayload}, res: Response) {
+export async function updateProjectTaskRequest(req: Request & {jwt: JwtPayload}, res: Response) {
   try{
-    const result = await removeKidFromTeam(req.body, req.jwt.id);
+    const result = await updateProjectTask(req.body, req.jwt.id);
+
+    res.status(200).send(result);
+  }catch(error){
+    res.status(500).send(error);
+  }
+}
+
+export async function removeProjectTaskRequest(req: Request & {jwt: JwtPayload}, res: Response) {
+  try{
+    const result = await removeProjectTask(req.body, req.jwt.id);
+
+    res.status(200).send(result);
+  }catch(error){
+    res.status(500).send(error);
+  }
+}
+
+export async function addKidToProjectTaskRequest(req: Request & {jwt: JwtPayload}, res: Response) {
+  try{
+    const result = await addKidToProjectTask(req.body, req.jwt.id);
 
     res.status(200).send(result);
   }catch(error){

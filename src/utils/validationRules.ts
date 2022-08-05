@@ -96,3 +96,37 @@ export const addKidToTeamRules = {
 export const removeKidFromTeamRules = {
   TeamId: 'integer|required',
 }
+
+export const createProjectRules = {
+  label: 'string|required',
+}
+
+export const updateProjectRules = {
+  ProjectId: 'integer|required',
+  label: 'string|required',
+}
+
+export const removeProjectRules = {
+  ProjectId: 'integer|required',
+}
+
+export const createProjectTaskRules = {
+  label: 'string|required',
+  date: 'string|required',
+  ProjectId: 'integer|required',
+}
+
+export const updateProjectTaskRules = {
+  ProjectTaskId: 'integer|required',
+  label: 'string|required',
+  date: 'string|required',
+  ProjectId: 'integer|required',
+}
+
+export const removeProjectTaskRules = {
+  ProjectTaskId: 'integer|required',
+}
+
+export const addKidToProjectTaskRules = {
+  ProjectTaskId: 'integer|required',
+}

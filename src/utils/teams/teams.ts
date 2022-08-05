@@ -4,8 +4,19 @@ import { KidTeam, Team } from '../../models';
 import { isKidBelongsToUser } from '../kid/kid';
 import { validateData, createTeamRules, updateTeamRules, removeTeamRules, addKidToTeamRules, removeKidFromTeamRules } from '../validationRules';
 
-export const isTeamBelongsToUser = async (team: typeof Team, UserId: number) => {
+/**
+ * Проверка наличия прав на команду у текущего пользователя. В случае успеха возвращает команду.
+ * @param TeamId 
+ * @param UserId 
+ * @returns 
+ */
+export const isTeamBelongsToUser = async (TeamId: number, UserId: number) => {
+  if(!TeamId) throw { errorMessage: `Отсутствует идентификатор команды` };
+
+  const team = await Team.findOne({where: {id: TeamId}});
+  if(!team) throw { errorMessage: `Команда  с идентификатором ${TeamId} не найдена` };
   if(team.UserId !== UserId) throw { errorMessage: 'Выбранная команда не принадлежит данному пользователю' };
+  return team;
 }
 
 export const createTeam = async (req: Request['body'], UserId: number) => {
@@ -23,20 +34,14 @@ export const createTeam = async (req: Request['body'], UserId: number) => {
 export const updateTeam = async (req: Request['body'], UserId: number) => {
   validateData(req, updateTeamRules);
 
-  const team = await Team.findOne({where: {id: req.id}});
-  if(!team) throw { errorMessage: `Команда с идентификатором ${req.id} не найдена`};
-  isTeamBelongsToUser(team, UserId);
-
+  const team = await isTeamBelongsToUser(req.id, UserId);
   return await team.update({label: req.label});
 }
 
 export const removeTeam = async (req: Request['body'], UserId: number) => {
   validateData(req, removeTeamRules);
 
-  const team = await Team.findOne({where: {id: req.id}});
-  if(!team) throw { errorMessage: `Команда с идентификатором ${req.id} не найдена`};
-  isTeamBelongsToUser(team, UserId);
-
+  const team = await isTeamBelongsToUser(req.id, UserId);
   return await team.update({isDeleted: true});
 }
 
@@ -46,13 +51,10 @@ export const addKidToTeam = async (req: Request['body'], UserId: number) => {
   const result: string[] = [];
   const errors: string[] = [];
 
-
-  const team = await Team.findOne({where: {id: req.TeamId}})
-  if(!team) throw { errorMessage: `Команда с идентификатором ${req.id} не найдена`};
-  isTeamBelongsToUser(team, UserId);
+  const team = await isTeamBelongsToUser(req.TeamId, UserId);
 
   for (const KidId of req.KidId) {
-    isKidBelongsToUser(UserId, KidId);
+    await isKidBelongsToUser(UserId, KidId);
   }
 
   for (const KidId of req.KidId) {
@@ -77,13 +79,10 @@ export const removeKidFromTeam = async (req: Request['body'], UserId: number) =>
   const result: string[] = [];
   const errors: string[] = [];
 
-
-  const team = await Team.findOne({where: {id: req.TeamId}})
-  if(!team) throw { errorMessage: `Команда с идентификатором ${req.id} не найдена`};
-  isTeamBelongsToUser(team, UserId);
+  const team = await isTeamBelongsToUser(req.TeamId, UserId);
 
   for (const KidId of req.KidId) {
-    isKidBelongsToUser(UserId, KidId);
+    await isKidBelongsToUser(UserId, KidId);
   }
 
   for (const KidId of req.KidId) {

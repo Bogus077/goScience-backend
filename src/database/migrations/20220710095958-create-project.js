@@ -9,7 +9,7 @@ module.exports = {
         type: Sequelize.INTEGER
       },
       TeamId: {
-        allowNull: false,
+        allowNull: true,
         type: Sequelize.INTEGER,
         references: {
           model: 'Team',
@@ -28,9 +28,6 @@ module.exports = {
       },
       label: {
         type: Sequelize.STRING,
-      },
-      active: {
-        type: Sequelize.BOOLEAN,
       },
       isDeleted: {
         type: Sequelize.BOOLEAN,

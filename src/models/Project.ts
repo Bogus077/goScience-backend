@@ -11,7 +11,7 @@ export const Project = sequelize.define(
       type: Sequelize.INTEGER
     },
     TeamId: {
-      allowNull: false,
+      allowNull: true,
       type: Sequelize.INTEGER,
       references: {
         model: 'Team',
@@ -30,9 +30,6 @@ export const Project = sequelize.define(
     },
     label: {
       type: Sequelize.STRING,
-    },
-    active: {
-      type: Sequelize.BOOLEAN,
     },
     isDeleted: {
       type: Sequelize.BOOLEAN,

@@ -3,13 +3,24 @@ export const router = express.Router();
 import bodyParser from 'body-parser';
 const jsonParser = bodyParser.json();
 import { verifyJWT } from '../middlewares';
-import { getUserTeamsRequest, createTeamRequest, updateTeamRequest, removeTeamRequest, addKidToTeamRequest, removeKidFromTeamRequest } from '../controllers/project.controller';
+import { 
+  getUserProjectsRequest, 
+  createProjectRequest, 
+  updateProjectRequest, 
+  removeProjectRequest, 
+  createProjectTaskRequest, 
+  updateProjectTaskRequest,
+  removeProjectTaskRequest,
+  addKidToProjectTaskRequest,
+} from '../controllers/project.controller';
 
 router.use([jsonParser]);
 
-router.get('/getTeams', [verifyJWT], getUserTeamsRequest);
-router.post('/createTeam', [verifyJWT], createTeamRequest);
-router.post('/updateTeam', [verifyJWT], updateTeamRequest);
-router.delete('/team', [verifyJWT], removeTeamRequest);
-router.post('/addKidToTeam', [verifyJWT], addKidToTeamRequest);
-router.delete('/removeKidFromTeam', [verifyJWT], removeKidFromTeamRequest);
+router.get('/get', [verifyJWT], getUserProjectsRequest);
+router.post('/create', [verifyJWT], createProjectRequest);
+router.post('/update', [verifyJWT], updateProjectRequest);
+router.delete('/remove', [verifyJWT], removeProjectRequest);
+router.post('/createTask', [verifyJWT], createProjectTaskRequest);
+router.post('/updateTask', [verifyJWT], updateProjectTaskRequest);
+router.delete('/removeTask', [verifyJWT], removeProjectTaskRequest);
+router.post('/addKid', [verifyJWT], addKidToProjectTaskRequest);

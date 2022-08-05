@@ -6,6 +6,7 @@ import { router as ClassRouter } from './routes/class.router';
 import { router as KidRouter } from './routes/kid.router';
 import { router as TasksRouter } from './routes/tasks.router';
 import { router as StatsRouter } from './routes/stats.router';
+import { router as TeamRouter } from './routes/team.router';
 import { router as ProjectRouter } from './routes/project.router';
 const { serverConfig } = require('./config/config');
 const cors = require('cors');
@@ -18,6 +19,7 @@ app.use('/api/class', ClassRouter);
 app.use('/api/kid', KidRouter);
 app.use('/api/tasks', TasksRouter);
 app.use('/api/stats', StatsRouter);
+app.use('/api/team', TeamRouter);
 app.use('/api/project', ProjectRouter);
 app.get('/api/', (request, response) => {
   response.send('Hello, Hackerman!');
