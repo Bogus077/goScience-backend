@@ -22,19 +22,55 @@ export const isTeamBelongsToUser = async (TeamId: number, UserId: number) => {
 export const createTeam = async (req: Request['body'], UserId: number) => {
   validateData(req, createTeamRules);
 
+  //Создание команды
   const newTeam = {
     label: req.label,
     UserId
   }
-
   const createdTeam = await Team.create(newTeam);
-  return createdTeam;
+
+  //Добавление детей в команду
+  const { kids } = req;
+  if (kids) {
+    for (const KidId of kids) {
+      await isKidBelongsToUser(UserId, KidId);
+    }
+
+    for (const KidId of kids) {
+      const newRow = {
+        TeamId: createdTeam.id, 
+        KidId
+      };
+
+      await KidTeam.create(newRow);     
+    }
+  }
+
+  return { createdTeam };
 }
 
 export const updateTeam = async (req: Request['body'], UserId: number) => {
   validateData(req, updateTeamRules);
 
   const team = await isTeamBelongsToUser(req.id, UserId);
+  const { kids } = req;
+  await KidTeam.destroy({where: {TeamId: team.id}});
+
+  if (kids) {
+    for (const KidId of kids) {
+      await isKidBelongsToUser(UserId, KidId);
+    }
+
+    for (const KidId of kids) {
+      const newRow = {
+        TeamId: req.id, 
+        KidId
+      };
+
+      await KidTeam.create(newRow);     
+    }
+  }
+
   return await team.update({label: req.label});
 }
 

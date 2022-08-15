@@ -1,5 +1,5 @@
 import { Request, Response } from 'express'
-import { Kid, Team } from '../models/index';
+import { Kid, Project, ProjectTask, Team } from '../models/index';
 import { JwtPayload } from '../middlewares/authJwt';
 import { addKidToTeam, createTeam, removeKidFromTeam, removeTeam, updateTeam } from '../utils/teams/teams';
 
@@ -8,7 +8,24 @@ export async function getUserTeamsRequest(req: Request & {jwt: JwtPayload}, res:
     const result = await Team.findAll({
       where: {UserId: req.jwt.id, isDeleted: null},
       attributes: { exclude: ['isDeleted'] },
-      include: [Kid]
+      include: [
+        Kid,
+        {
+          model: Project,
+          where: { isDeleted: null },
+          required: false,
+          include: [
+            {
+              model: ProjectTask,
+              where: { isDeleted: null },
+              required: false,
+            }
+          ]
+        }
+      ],
+      order: [
+        [Project, 'id', 'desc']
+      ]
     });
 
     res.status(200).send(result);

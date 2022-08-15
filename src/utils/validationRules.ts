@@ -127,6 +127,18 @@ export const removeProjectTaskRules = {
   ProjectTaskId: 'integer|required',
 }
 
+export const doneProjectTaskRules = {
+  ProjectTaskId: 'integer|required',
+}
+
 export const addKidToProjectTaskRules = {
   ProjectTaskId: 'integer|required',
+}
+
+export const getProjectTaskByIdRules = {
+  ProjectTaskId: 'integer|required',
+}
+
+export const archiveProjectRules = {
+  ProjectId: 'integer|required',
 }

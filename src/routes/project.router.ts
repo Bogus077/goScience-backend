@@ -12,6 +12,9 @@ import {
   updateProjectTaskRequest,
   removeProjectTaskRequest,
   addKidToProjectTaskRequest,
+  getProjectTaskByIdRequest,
+  archiveProjectRequest,
+  doneProjectTaskRequest,
 } from '../controllers/project.controller';
 
 router.use([jsonParser]);
@@ -24,3 +27,7 @@ router.post('/createTask', [verifyJWT], createProjectTaskRequest);
 router.post('/updateTask', [verifyJWT], updateProjectTaskRequest);
 router.delete('/removeTask', [verifyJWT], removeProjectTaskRequest);
 router.post('/addKid', [verifyJWT], addKidToProjectTaskRequest);
+router.post('/getProjectTask', [verifyJWT], getProjectTaskByIdRequest);
+router.post('/archive', [verifyJWT], archiveProjectRequest);
+router.post('/doneTask', [verifyJWT], doneProjectTaskRequest);
+

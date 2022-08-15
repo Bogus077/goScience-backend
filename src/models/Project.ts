@@ -28,6 +28,10 @@ export const Project = sequelize.define(
       },
       unique: false,
     },
+    archived: {
+      type: Sequelize.BOOLEAN,
+      defaultValue: false,
+    },
     label: {
       type: Sequelize.STRING,
     },

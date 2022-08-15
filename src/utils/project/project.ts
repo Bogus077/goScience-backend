@@ -1,8 +1,8 @@
 import { Request, Response } from 'express';
-import { KidProjectTask, KidTeam, Project, ProjectTask, Team } from '../../models';
+import { Kid, KidProjectTask, KidTeam, Project, ProjectTask, Team } from '../../models';
 import { isKidBelongsToUser } from '../kid/kid';
 import { isTeamBelongsToUser } from '../teams/teams';
-import { validateData, createProjectRules, updateProjectRules, removeProjectRules, createProjectTaskRules, updateProjectTaskRules, removeProjectTaskRules, addKidToProjectTaskRules } from '../validationRules';
+import { validateData, createProjectRules, updateProjectRules, removeProjectRules, createProjectTaskRules, updateProjectTaskRules, removeProjectTaskRules, addKidToProjectTaskRules, getProjectTaskByIdRules, archiveProjectRules, doneProjectTaskRules } from '../validationRules';
 
 /**
  * Проверка наличия прав на проект у текущего пользователя. В случае успеха возвращает проект.
@@ -58,6 +58,15 @@ export const removeProject = async (req: Request['body'], UserId: number) => {
   return removedProject;
 }
 
+export const archiveProject = async (req: Request['body'], UserId: number) => {
+  validateData(req, archiveProjectRules);
+  const { ProjectId } = req;
+  const project = await isProjectBelongsToUser(ProjectId, UserId);
+
+  const archivedProject = await project.update({archived: true});
+  return archivedProject;
+}
+
 //ProjectTask
 
 /**
@@ -79,9 +88,8 @@ export const removeProject = async (req: Request['body'], UserId: number) => {
 
 export const createProjectTask = async (req: Request['body'], UserId: number) => {
   validateData(req, createProjectTaskRules);
-  const {description = '', label, date, points = 1, ProjectId} = req;  
+  const {description = '', label, date, points = 1, ProjectId, kids = []} = req;  
   await isProjectBelongsToUser(ProjectId, UserId);
-
   const newProjectTask = {
     label,
     description,
@@ -91,16 +99,35 @@ export const createProjectTask = async (req: Request['body'], UserId: number) =>
     status: false,
   }
 
-  const createdProject = await ProjectTask.create(newProjectTask);
-  return createdProject;
+  for (const KidId of kids) {
+    await isKidBelongsToUser(UserId, KidId);
+  }
+
+  const createdProjectTask = await ProjectTask.create(newProjectTask);
+
+  if (kids && createdProjectTask) {
+    for (const KidId of kids) {
+      const newKid = {
+        KidId,
+        ProjectTaskId: createdProjectTask.id,
+      }
+      await KidProjectTask.create(newKid);
+    }    
+  }
+
+  return createdProjectTask;
 }
 
 export const updateProjectTask = async (req: Request['body'], UserId: number) => {
   validateData(req, updateProjectTaskRules);
-  const {description = '', label, date, points = 1, ProjectId, ProjectTaskId, status = false } = req;  
+  const {description = '', label, date, points = 1, ProjectId, ProjectTaskId, status = false, kids = [] } = req;  
   await isProjectBelongsToUser(ProjectId, UserId);
-  const projectTask = await isProjectTaskBelongsToUser(ProjectTaskId, UserId);
 
+  for (const KidId of kids) {
+    await isKidBelongsToUser(UserId, KidId);
+  }
+
+  const projectTask = await isProjectTaskBelongsToUser(ProjectTaskId, UserId);
   const newProjectTask = {
     label,
     description,
@@ -109,8 +136,19 @@ export const updateProjectTask = async (req: Request['body'], UserId: number) =>
     ProjectId,
     status,
   }
-
   const updatedProjectTask = await projectTask.update(newProjectTask);
+  await KidProjectTask.destroy({where: {ProjectTaskId: updatedProjectTask.id}})
+
+  if (kids && updatedProjectTask) {
+    for (const KidId of kids) {
+      const newKid = {
+        KidId,
+        ProjectTaskId: updatedProjectTask.id,
+      }
+      await KidProjectTask.create(newKid);
+    }    
+  }
+
   return updatedProjectTask;
 }
 
@@ -121,6 +159,27 @@ export const removeProjectTask = async (req: Request['body'], UserId: number) =>
 
   const removedProjectTask = await projectTask.update({isDeleted: true});
   return removedProjectTask;
+}
+
+export const doneProjectTask = async (req: Request['body'], UserId: number) => {
+  validateData(req, doneProjectTaskRules);
+  const { ProjectTaskId } = req;
+  const projectTask = await isProjectTaskBelongsToUser(ProjectTaskId, UserId);
+
+  const doneProjectTask = await projectTask.update({status: true});
+  return doneProjectTask;
+}
+
+export const getProjectTaskById = async (req: Request['body'], UserId: number) => {
+  validateData(req, getProjectTaskByIdRules);
+  const { ProjectTaskId } = req;
+  await isProjectTaskBelongsToUser(ProjectTaskId, UserId);
+  const projectTask = await ProjectTask.findOne({
+    where: {id: ProjectTaskId}, 
+    include: [Kid],
+  }) 
+
+  return projectTask;
 }
 
 export const addKidToProjectTask = async (req: Request['body'], UserId: number) => {

@@ -1,7 +1,7 @@
 import { Request, Response } from 'express'
 import { Kid, Project, ProjectTask, Team } from '../models/index';
 import { JwtPayload } from '../middlewares/authJwt';
-import { addKidToProjectTask, createProject, createProjectTask, removeProject, removeProjectTask, updateProject, updateProjectTask } from '../utils/project/project';
+import { addKidToProjectTask, archiveProject, createProject, createProjectTask, doneProjectTask, getProjectTaskById, removeProject, removeProjectTask, updateProject, updateProjectTask } from '../utils/project/project';
 
 export async function getUserProjectsRequest(req: Request & {jwt: JwtPayload}, res: Response) {
   try{
@@ -52,7 +52,27 @@ export async function removeProjectRequest(req: Request & {jwt: JwtPayload}, res
   }
 }
 
-//ProjectTasks
+export async function archiveProjectRequest(req: Request & {jwt: JwtPayload}, res: Response) {
+  try{
+    const result = await archiveProject(req.body, req.jwt.id);
+
+    res.status(200).send(result);
+  }catch(error){
+    res.status(500).send(error);
+  }
+}
+
+//ProjectTasks 
+
+export async function getProjectTaskByIdRequest(req: Request & {jwt: JwtPayload}, res: Response) {
+  try{
+    const result = await getProjectTaskById(req.body, req.jwt.id);
+
+    res.status(200).send(result);
+  }catch(error){
+    res.status(500).send(error);
+  }
+}
 
 export async function createProjectTaskRequest(req: Request & {jwt: JwtPayload}, res: Response) {
   try{
@@ -77,6 +97,16 @@ export async function updateProjectTaskRequest(req: Request & {jwt: JwtPayload},
 export async function removeProjectTaskRequest(req: Request & {jwt: JwtPayload}, res: Response) {
   try{
     const result = await removeProjectTask(req.body, req.jwt.id);
+
+    res.status(200).send(result);
+  }catch(error){
+    res.status(500).send(error);
+  }
+}
+
+export async function doneProjectTaskRequest(req: Request & {jwt: JwtPayload}, res: Response) {
+  try{
+    const result = await doneProjectTask(req.body, req.jwt.id);
 
     res.status(200).send(result);
   }catch(error){
