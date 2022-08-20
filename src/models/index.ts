@@ -15,6 +15,9 @@ import { KidTeam } from './KidTeam';
 import { Project } from './Project';
 import { ProjectTask } from './ProjectTask';
 import { KidProjectTask } from './KidProjectTask';
+import { KidSummaryTask } from './KidSummaryTask';
+import { KidSummaryProjectTask } from './KidSummaryProjectTask';
+import { KidSummaryUser } from './KidSummaryUser';
 
 export {
   User, 
@@ -33,6 +36,9 @@ export {
   Project,
   ProjectTask,
   KidProjectTask,
+  KidSummaryTask,
+  KidSummaryProjectTask,
+  KidSummaryUser,
 };
 
 User.hasMany(UserRefresh);
@@ -83,3 +89,13 @@ User.hasMany(Team);
 Team.belongsTo(User);
 User.hasMany(Project);
 Project.belongsTo(User);
+
+//Summary
+KidSummaryTask.belongsTo(Kid);
+Kid.hasMany(KidSummaryTask);
+
+KidSummaryProjectTask.belongsTo(Kid);
+Kid.hasMany(KidSummaryProjectTask);
+
+KidSummaryUser.belongsTo(Kid);
+Kid.hasMany(KidSummaryUser);

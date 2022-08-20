@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { TasksDay, TasksWeek, TasksQuarter, TasksMonth, Kid, UserSettings, Class, StatsTask } from '../../models';
+import { TasksDay, TasksWeek, TasksQuarter, TasksMonth, Kid, UserSettings, Class, StatsTask, KidSummaryTask } from '../../models';
 import { isKidBelongsToUser } from '../kid/kid';
 import { validateData, getTasksRules, createTaskgroupRules, createTaskRules, changeTaskStatusRules, removeTaskRules } from '../validationRules';
 import { v4 as uuidv4 } from 'uuid';
@@ -238,7 +238,9 @@ export const changeTaskStatus = async (requestData: Request['body'], UserId: num
       if(requestData.status === true && taskDay.status === false && taskDay.TasksWeekId){
         await updatePointsDay(taskDay.TasksWeekId, taskDay.points, 'remove');
 
+        //stats
         await StatsTask.create({UserId, KidId: taskDay.KidId, TasksDayId: taskDay.id, points: taskDay.points});
+        await KidSummaryTask.create({KidId: taskDay.KidId, label: taskDay.label, points: taskDay.points});
       }else if (requestData.status === false && taskDay.status === true){
         await updatePointsDay(taskDay.TasksWeekId, taskDay.points, 'add');
 
@@ -251,16 +253,28 @@ export const changeTaskStatus = async (requestData: Request['body'], UserId: num
       const taskWeek = await TasksWeek.findOne({where: {id: requestData.id}})
       if(!taskWeek) throw { errorMessage: 'Задание не найдено' };
       await isKidBelongsToUser(UserId, taskWeek.KidId);
+      //stats
+      if(requestData.status === true && taskWeek.status === false){
+        await KidSummaryTask.create({KidId: taskWeek.KidId, label: taskWeek.label, points: taskWeek.points});
+      }
       return await taskWeek.update({status: requestData.status});
     case "month":
       const taskMonth = await TasksMonth.findOne({where: {id: requestData.id}})
       if(!taskMonth) throw { errorMessage: 'Задание не найдено' };
       await isKidBelongsToUser(UserId, taskMonth.KidId);
+      //stats
+      if(requestData.status === true && taskMonth.status === false){
+        await KidSummaryTask.create({KidId: taskMonth.KidId, label: taskMonth.label, points: taskMonth.points});
+      }
       return await taskMonth.update({status: requestData.status});
     case "quarter":
       const taskQuarter = await TasksQuarter.findOne({where: {id: requestData.id}})
       if(!taskQuarter) throw { errorMessage: 'Задание не найдено' };
       await isKidBelongsToUser(UserId, taskQuarter.KidId);
+      //stats
+      if(requestData.status === true && taskQuarter.status === false){
+        await KidSummaryTask.create({KidId: taskQuarter.KidId, label: taskQuarter.label, points: taskQuarter.points});
+      }
       return await taskQuarter.update({status: requestData.status});
   }
 }

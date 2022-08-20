@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { Kid, KidProjectTask, KidTeam, Project, ProjectTask, Team } from '../../models';
+import { Kid, KidProjectTask, KidSummaryProjectTask, KidTeam, Project, ProjectTask, Team } from '../../models';
 import { isKidBelongsToUser } from '../kid/kid';
 import { isTeamBelongsToUser } from '../teams/teams';
 import { validateData, createProjectRules, updateProjectRules, removeProjectRules, createProjectTaskRules, updateProjectTaskRules, removeProjectTaskRules, addKidToProjectTaskRules, getProjectTaskByIdRules, archiveProjectRules, doneProjectTaskRules } from '../validationRules';
@@ -167,6 +167,14 @@ export const doneProjectTask = async (req: Request['body'], UserId: number) => {
   const projectTask = await isProjectTaskBelongsToUser(ProjectTaskId, UserId);
 
   const doneProjectTask = await projectTask.update({status: true});
+  const kids = await KidProjectTask.findAll({where: {ProjectTaskId: doneProjectTask.id}});
+  const kidIds = kids.map((kid: typeof KidProjectTask) => kid.KidId);
+  console.log('===========');
+  console.log(kidIds);
+  
+  for (const KidId of kidIds){
+    await KidSummaryProjectTask.create({KidId: parseInt(KidId), label: doneProjectTask.label, points: doneProjectTask.points});
+  }
   return doneProjectTask;
 }
 

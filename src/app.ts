@@ -8,6 +8,7 @@ import { router as TasksRouter } from './routes/tasks.router';
 import { router as StatsRouter } from './routes/stats.router';
 import { router as TeamRouter } from './routes/team.router';
 import { router as ProjectRouter } from './routes/project.router';
+import { router as SummaryRouter } from './routes/summary.router';
 const { serverConfig } = require('./config/config');
 const cors = require('cors');
 const app = express();
@@ -21,6 +22,7 @@ app.use('/api/tasks', TasksRouter);
 app.use('/api/stats', StatsRouter);
 app.use('/api/team', TeamRouter);
 app.use('/api/project', ProjectRouter);
+app.use('/api/summary', SummaryRouter);
 app.get('/api/', (request, response) => {
   response.send('Hello, Hackerman!');
 });

@@ -142,3 +142,14 @@ export const getProjectTaskByIdRules = {
 export const archiveProjectRules = {
   ProjectId: 'integer|required',
 }
+
+//summary
+export const addKidUserSummaryRules = {
+  KidId: 'integer|required',
+  label: 'string|required',
+  type: 'string|required',
+}
+
+export const changeSummaryStatusRules = {
+  type: 'string|required',
+}
