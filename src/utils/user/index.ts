@@ -1,8 +1,8 @@
 import { Request, Response } from 'express';
 import bcrypt from 'bcrypt';
-import { validateData, userSignUpRules, userLoginRules } from '../validationRules';
+import { validateData, userSignUpRules, userLoginRules, addRoleRules, addRoleToUserRules } from '../validationRules';
 import {sequelize} from '../../database/database.config';
-import { User, Class } from '../../models/index';
+import { User, Class, Role, UserRole } from '../../models/index';
 import { createRefreshToken, createToken } from '../token';
 
 /**
@@ -60,4 +60,34 @@ export const checkIsPhoneAlreadyExist = async (phone: string) => {
   // }
 
   return {phoneExist: user ? user.id : false};
+}
+
+export const createRole = async (req: Request['body']) => {
+  validateData(req, addRoleRules);
+  const { name } = req;
+
+  const newRole = await Role.create({ name });
+
+  return newRole;
+}
+
+export const addRoleToUser = async (req: Request['body']) => {
+  validateData(req, addRoleToUserRules);
+  const { UserId, RoleId } = req;
+
+  const newRole = await UserRole.create({ UserId, RoleId });
+
+  return newRole;
+}
+
+export const removeRoleFromUser = async (req: Request['body']) => {
+  validateData(req, addRoleToUserRules);
+  const { UserId, RoleId } = req;
+
+  const role = await UserRole.findOne({ where: { UserId, RoleId } });
+  if(!role) throw { errorMessage: 'UserRole not found' };
+
+  await role.destroy();
+
+  return {result: 'deleted'};
 }

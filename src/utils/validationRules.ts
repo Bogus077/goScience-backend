@@ -19,6 +19,15 @@ export const userLoginRules = {
   password: 'string|required',
 }
 
+export const addRoleRules = {
+  name: 'string|required',
+}
+
+export const addRoleToUserRules = {
+  UserId: 'integer|required',
+  RoleId: 'integer|required',
+}
+
 //class
 export const createClassRules = {
   label: 'string|required',
@@ -152,4 +161,17 @@ export const addKidUserSummaryRules = {
 
 export const changeSummaryStatusRules = {
   type: 'string|required',
+}
+
+//members
+export const addMemberRules = {
+  name: 'string|required',
+  surname: 'string|required',
+  sex: 'string|required',
+  plat: 'integer|required',
+}
+
+export const changeMemberStatusRules = {
+  id: 'integer|required',
+  status: 'boolean|required',
 }

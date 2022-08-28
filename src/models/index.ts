@@ -18,6 +18,10 @@ import { KidProjectTask } from './KidProjectTask';
 import { KidSummaryTask } from './KidSummaryTask';
 import { KidSummaryProjectTask } from './KidSummaryProjectTask';
 import { KidSummaryUser } from './KidSummaryUser';
+import { Member } from './Member';
+import { Role } from './Role';
+import { UserRole } from './UserRole';
+import { MemberLogs } from './MemberLogs';
 
 export {
   User, 
@@ -39,6 +43,10 @@ export {
   KidSummaryTask,
   KidSummaryProjectTask,
   KidSummaryUser,
+  Member,
+  Role,
+  UserRole,
+  MemberLogs,
 };
 
 User.hasMany(UserRefresh);
@@ -63,6 +71,9 @@ TasksQuarter.belongsTo(Kid);
 
 User.belongsToMany(Class, {through: UserClass});
 Class.belongsToMany(User, {through: UserClass});
+
+User.belongsToMany(Role, {through: UserRole});
+Role.belongsToMany(User, {through: UserRole});
 
 //Stats
 User.hasMany(StatsTask);
@@ -99,3 +110,7 @@ Kid.hasMany(KidSummaryProjectTask);
 
 KidSummaryUser.belongsTo(Kid);
 Kid.hasMany(KidSummaryUser);
+
+//Logs
+User.hasMany(MemberLogs);
+MemberLogs.belongsTo(User);

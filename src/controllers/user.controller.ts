@@ -2,8 +2,8 @@ import { Request, Response } from 'express'
 import bcrypt from 'bcrypt';
 import { validateData, userSignUpRules } from '../utils/validationRules';
 import {sequelize} from '../database/database.config';
-import { Class,  Kid,  TasksDay,  TasksMonth,  TasksQuarter,  TasksWeek,  User, UserSettings } from '../models/index';
-import { checkIsPhoneAlreadyExist, signUpNewUser, UserlogIn } from '../utils/user';
+import { Class,  Kid,  Role,  TasksDay,  TasksMonth,  TasksQuarter,  TasksWeek,  User, UserSettings } from '../models/index';
+import { addRoleToUser, checkIsPhoneAlreadyExist, createRole, removeRoleFromUser, signUpNewUser, UserlogIn } from '../utils/user';
 import { createRefreshToken, createToken } from '../utils/token';
 import { JwtPayload } from 'src/middlewares/authJwt';
 
@@ -38,7 +38,8 @@ export async function getUserRequest(req: Request & {jwt: JwtPayload}, res: Resp
             }
           }
         },
-        {model: Class}
+        {model: Class},
+        {model: Role}
       ]
     });
 
@@ -62,7 +63,7 @@ export async function signUpRequest(req: Request, res: Response) {
       surname: createdUser.surname,
       phone: createdUser.phone,
       accessToken: createToken(createdUser),
-      refreshToken: createRefreshToken(createdUser),
+      refreshToken: await createRefreshToken(createdUser),
     }
 
     res.status(200).send(result);
@@ -86,6 +87,39 @@ export async function signInRequest(req: Request, res: Response) {
   try{
     const requestData = req.body;
     const result = await UserlogIn(requestData);
+
+    res.status(200).send(result);
+  }catch(error){
+    res.status(500).send(error);
+  }
+}
+
+export async function createRoleRequest(req: Request, res: Response) {
+  try{
+    const requestData = req.body;
+    const result = await createRole(requestData);
+
+    res.status(200).send(result);
+  }catch(error){
+    res.status(500).send(error);
+  }
+}
+
+export async function addRoleToUserRequest(req: Request, res: Response) {
+  try{
+    const requestData = req.body;
+    const result = await addRoleToUser(requestData);
+
+    res.status(200).send(result);
+  }catch(error){
+    res.status(500).send(error);
+  }
+}
+
+export async function removeRoleFromUserRequest(req: Request, res: Response) {
+  try{
+    const requestData = req.body;
+    const result = await removeRoleFromUser(requestData);
 
     res.status(200).send(result);
   }catch(error){

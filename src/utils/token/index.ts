@@ -4,9 +4,10 @@ import { User, UserRefresh } from '../../models';
 
 /** Create new JWT token */
 export const createToken = (user: typeof User) => {
-  const token = jwt.sign({ id: user.id }, jwtSecret as Secret, {
-    expiresIn: jwtExpiryTime,
-  });
+  const token = jwt.sign({ id: user.id }, jwtSecret as Secret, 
+    {
+      expiresIn: jwtExpiryTime
+    });
   return token;
 }
 

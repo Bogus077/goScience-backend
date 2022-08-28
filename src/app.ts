@@ -9,24 +9,43 @@ import { router as StatsRouter } from './routes/stats.router';
 import { router as TeamRouter } from './routes/team.router';
 import { router as ProjectRouter } from './routes/project.router';
 import { router as SummaryRouter } from './routes/summary.router';
-const { serverConfig } = require('./config/config');
-const cors = require('cors');
+import { router as MembersRouter } from './routes/members.router';
+import { router as AuthRouter } from './routes/auth.router';
+import { serverConfig } from './config/config';
+import cors from 'cors';
+import { onConnection } from './utils/socket/connection';
 const app = express();
+import http from 'http';
+const server = http.createServer(app);
+import { Server, Socket } from "socket.io";
+import { verifyJwtSocket, verifyOfficerRole } from './utils/socket/authHandler';
+const io = new Server(server, {
+  cors: {
+    origin: '*'
+  }
+});
 
 // app.use(tokenValidation);
 app.use(cors());
-app.use('/api/user', UserRouter);
-app.use('/api/class', ClassRouter);
-app.use('/api/kid', KidRouter);
-app.use('/api/tasks', TasksRouter);
-app.use('/api/stats', StatsRouter);
-app.use('/api/team', TeamRouter);
-app.use('/api/project', ProjectRouter);
-app.use('/api/summary', SummaryRouter);
-app.get('/api/', (request, response) => {
+app.use('/user', UserRouter);
+app.use('/class', ClassRouter);
+app.use('/kid', KidRouter);
+app.use('/tasks', TasksRouter);
+app.use('/stats', StatsRouter);
+app.use('/team', TeamRouter);
+app.use('/project', ProjectRouter);
+app.use('/summary', SummaryRouter);
+app.use('/members', MembersRouter);
+app.use('/auth', AuthRouter);
+app.get('/', (request, response) => {
   response.send('Hello, Hackerman!');
 });
 
-app.listen(serverConfig);
+// обрабатываем подключение веб-сокета
+io.use((socket, next) => verifyJwtSocket(socket, next));
+io.use((socket, next) => verifyOfficerRole(socket, next));
+io.on('connection', (socket: Socket) => onConnection(io, socket))
+
+server.listen(serverConfig);
 
 console.log(`App started on ${serverConfig.port}`);
