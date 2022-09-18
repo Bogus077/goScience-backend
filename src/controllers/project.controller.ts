@@ -1,5 +1,5 @@
 import { Request, Response } from 'express'
-import { Kid, Project, ProjectTask, Team } from '../models/index';
+import { Kid, KidProjectTask, KidTeam, Project, ProjectTask, Team } from '../models/index';
 import { JwtPayload } from '../middlewares/authJwt';
 import { addKidToProjectTask, archiveProject, createProject, createProjectTask, doneProjectTask, getProjectTaskById, removeProject, removeProjectTask, updateProject, updateProjectTask } from '../utils/project/project';
 

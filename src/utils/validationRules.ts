@@ -175,3 +175,7 @@ export const changeMemberStatusRules = {
   id: 'integer|required',
   status: 'boolean|required',
 }
+
+export const removeMemberRules = {
+  id: 'integer|required',
+}

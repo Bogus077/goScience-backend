@@ -228,6 +228,15 @@ export const createTask = async (requestData: Request['body'], type: 'day' | 'we
 
 export const changeTaskStatus = async (requestData: Request['body'], UserId: number) => {
   validateData(requestData, changeTaskStatusRules);
+  console.log('====================')
+  console.log('====================')
+  console.log('====================')
+console.log(requestData);
+
+  console.log('====================')
+  console.log('====================')
+  console.log('====================')
+
 
   switch(requestData.type){
     case "day":
@@ -237,16 +246,16 @@ export const changeTaskStatus = async (requestData: Request['body'], UserId: num
       
       if(requestData.status === true && taskDay.status === false && taskDay.TasksWeekId){
         await updatePointsDay(taskDay.TasksWeekId, taskDay.points, 'remove');
-
-        //stats
-        await StatsTask.create({UserId, KidId: taskDay.KidId, TasksDayId: taskDay.id, points: taskDay.points});
-        await KidSummaryTask.create({KidId: taskDay.KidId, label: taskDay.label, points: taskDay.points});
       }else if (requestData.status === false && taskDay.status === true){
         await updatePointsDay(taskDay.TasksWeekId, taskDay.points, 'add');
 
         const statsToDelete = await StatsTask.findOne({where: {TasksDayId: taskDay.id}});
         if(statsToDelete) await statsToDelete.destroy();
       }
+
+      //stats
+      await StatsTask.create({UserId, KidId: taskDay.KidId, TasksDayId: taskDay.id, points: taskDay.points});
+      await KidSummaryTask.create({KidId: taskDay.KidId, label: taskDay.label, points: taskDay.points});
 
       return await taskDay.update({status: requestData.status});
     case "week":

@@ -5,7 +5,7 @@ import { changeMemberStatus } from "../member/member";
 export const membersHandler =  (io: any, socket: any) => {
   // Получение списка кадет
   const getMembers = async () => {
-    const result = await Member.findAll();
+    const result = await Member.findAll({ where: {isDeleted: false || null}});
 
     io.in(socket.roomId).emit('members', result)
   }

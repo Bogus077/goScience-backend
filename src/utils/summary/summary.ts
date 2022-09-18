@@ -14,8 +14,8 @@ const getWeekStart = (date: Date) => {
   } else if (monday.getDay() === 0) {
     monday.setDate(monday.getDate() - 6);
   }
-  monday.setSeconds(-1);
 
+  monday.setHours(monday.getHours() - 4);
   return monday;
 }
 
@@ -27,8 +27,8 @@ const getWeekEnd = (date: Date) => {
       sunday.getDate() + (8 - sunday.getDay())
     );
   }
-  sunday.setSeconds(-1);
 
+  sunday.setHours(sunday.getHours() - 4);
   return sunday;
 }
 
@@ -59,13 +59,13 @@ export const isSummaryUserBelongsToUser = async (UserId: number, summaryId: numb
 export const getKidSummary = async (req: Request['body'], UserId: number) => {
 
   const today = new Date();
+    today.setHours(today.getHours() + 4);
     today.setHours(0);
     today.setMinutes(0);
     today.setSeconds(0);
   const weekStart = getWeekStart(today);
-  const weekEnd = getWeekEnd(today);
-    today.setSeconds(-1);
-
+  const weekEnd = getWeekEnd(today); 
+  
   const result = await UserSettings.findOne({
     where: UserId, 
     include: [{
