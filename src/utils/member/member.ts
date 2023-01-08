@@ -1,8 +1,9 @@
 import { Request, Response } from 'express';
 import { Kid, KidProjectTask, KidSummaryProjectTask, KidTeam, Member, Project, ProjectTask, Team } from '../../models';
+import { createMembersAddUserLog, createMembersEditUserLog, createMembersRemoveUserLog } from '../memberLogs/logs';
 import { validateData, addMemberRules, changeMemberStatusRules, removeMemberRules, editMemberRules } from '../validationRules';
 
-export const addMember = async (req: Request['body']) => {
+export const addMember = async (req: Request['body'], UserId: number) => {
   validateData(req, addMemberRules);
   const {name, surname, sex, plat} = req; 
   const newMember = {
@@ -13,16 +14,19 @@ export const addMember = async (req: Request['body']) => {
   } 
 
   const result = await Member.create(newMember);
+  await createMembersAddUserLog(UserId, result);
   return result;
 }
 
-export const removeMember = async (req: Request['body']) => {
+export const removeMember = async (req: Request['body'], UserId: number) => {
   validateData(req, removeMemberRules);
   const { id } = req;  
 
   const member = await Member.findOne({ where: { id } });
   if(!member) throw { errorMessage: 'Member not found' }
   await member.update({isDeleted: true});
+  await createMembersRemoveUserLog(UserId, member);
+  
 
   return {result: 'deleted'};
 }
@@ -43,7 +47,7 @@ export const changeMemberStatus = async (req: Request['body']) => {
   return result;
 }
 
-export const editMember = async (req: Request['body']) => {
+export const editMember = async (req: Request['body'], UserId: number) => {
   validateData(req, editMemberRules);
   const {id, name, surname, sex, plat} = req;
 
@@ -58,5 +62,6 @@ export const editMember = async (req: Request['body']) => {
   };
 
   const result = await member.update(newMember);
+  await createMembersEditUserLog(UserId, result)
   return result;
 }

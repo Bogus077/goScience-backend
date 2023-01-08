@@ -9,6 +9,30 @@ export const createMembersChangeStatusLog = async (UserId: number, MemberId: num
   }
 }
 
+export const createMembersEditUserLog = async (UserId: number, member: typeof Member) => {
+  const user = await User.findOne({ where: { id: UserId } });
+  if(user && member){
+    const log = `${user.surname} ${user.name} отредактировал кадета ${member.surname} ${member.name}`;
+    await MemberLogs.create({UserId, log});
+  }
+}
+
+export const createMembersAddUserLog = async (UserId: number, member: typeof Member) => {
+  const user = await User.findOne({ where: { id: UserId } });
+  if(user && member){
+    const log = `${user.surname} ${user.name} добавил кадета ${member.surname} ${member.name}`;
+    await MemberLogs.create({UserId, log});
+  }
+}
+
+export const createMembersRemoveUserLog = async (UserId: number, member: typeof Member) => {
+  const user = await User.findOne({ where: { id: UserId } });
+  if(user && member){
+    const log = `${user.surname} ${user.name} удалил кадета ${member.surname} ${member.name}`;
+    await MemberLogs.create({UserId, log});
+  }
+}
+
 export const createMembersConnectLog = async (UserId: number) => {
   const user = await User.findOne({ where: { id: UserId } });
   if(user){

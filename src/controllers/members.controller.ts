@@ -6,6 +6,7 @@ import { TasksDay, TasksWeek, TasksQuarter, Member, MemberLogs } from '../models
 import { JwtPayload } from '../middlewares/authJwt';
 import { changeSummaryStatus, createKidUserSummary, getKidSummary } from '../utils/summary/summary';
 import { addMember, changeMemberStatus, editMember, removeMember } from '../utils/member/member';
+import { Op, Sequelize } from 'sequelize/dist';
 
 export async function getMembersRequest(req: Request & {jwt: JwtPayload}, res: Response) {
   try{
@@ -19,7 +20,7 @@ export async function getMembersRequest(req: Request & {jwt: JwtPayload}, res: R
 
 export async function addMembersRequest(req: Request & {jwt: JwtPayload}, res: Response) {
   try{
-    const result = await addMember(req.body);
+    const result = await addMember(req.body, req.jwt.id);
 
     res.status(200).send(result);
   }catch(error){
@@ -29,7 +30,7 @@ export async function addMembersRequest(req: Request & {jwt: JwtPayload}, res: R
 
 export async function removeMembersRequest(req: Request & {jwt: JwtPayload}, res: Response) {
   try{
-    const result = await removeMember(req.body);
+    const result = await removeMember(req.body, req.jwt.id);
 
     res.status(200).send(result);
   }catch(error){
@@ -49,7 +50,7 @@ export async function changeMemberStatusRequest(req: Request & {jwt: JwtPayload}
 
 export async function editMemberRequest(req: Request & {jwt: JwtPayload}, res: Response) {
   try{
-    const result = await editMember(req.body);
+    const result = await editMember(req.body, req.jwt.id);
 
     res.status(200).send(result);
   }catch(error){
@@ -59,7 +60,19 @@ export async function editMemberRequest(req: Request & {jwt: JwtPayload}, res: R
 
 export async function getMembersLogsRequest(req: Request & {jwt: JwtPayload}, res: Response) {
   try{
-    const result = await MemberLogs.findAll({order: [['id', 'DESC']], limit: 100});
+    console.log(req.query);
+    const {limit = 100, UserId, log} = req.query;
+    let filters = {};
+    if(UserId) filters = {...filters, UserId};
+    if(log) filters = {...filters, log: {[Op.iLike]: `%${log}%`}};
+
+
+    const result = await MemberLogs.findAll(
+      {
+        where: filters, 
+        order: [['id', 'DESC']], 
+        limit
+      });
 
     res.status(200).send(result);
   }catch(error){
