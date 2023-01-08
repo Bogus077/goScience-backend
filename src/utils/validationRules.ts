@@ -176,6 +176,14 @@ export const changeMemberStatusRules = {
   status: 'boolean|required',
 }
 
+export const editMemberRules = {
+  id: 'integer|required',
+  name: 'string|required',
+  surname: 'string|required',
+  sex: 'string|required',
+  plat: 'integer|required',
+}
+
 export const removeMemberRules = {
   id: 'integer|required',
 }

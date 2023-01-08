@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import { Kid, KidProjectTask, KidSummaryProjectTask, KidTeam, Member, Project, ProjectTask, Team } from '../../models';
-import { validateData, addMemberRules, changeMemberStatusRules, removeMemberRules } from '../validationRules';
+import { validateData, addMemberRules, changeMemberStatusRules, removeMemberRules, editMemberRules } from '../validationRules';
 
 export const addMember = async (req: Request['body']) => {
   validateData(req, addMemberRules);
@@ -38,6 +38,24 @@ export const changeMemberStatus = async (req: Request['body']) => {
     id,
     status: status ? true : null,
   }
+
+  const result = await member.update(newMember);
+  return result;
+}
+
+export const editMember = async (req: Request['body']) => {
+  validateData(req, editMemberRules);
+  const {id, name, surname, sex, plat} = req;
+
+  const member = await Member.findOne({where: {id}});
+  if(!member) throw {errorMessage: 'Ученик не найден'};
+
+  const newMember = {
+    name,
+    surname,
+    sex,
+    plat
+  };
 
   const result = await member.update(newMember);
   return result;

@@ -11,9 +11,10 @@ export async function getAllUsersRequest(req: Request & {jwt: JwtPayload}, res: 
   try{
     const result = await User.findAll({
       attributes: { exclude: ['password'] },
-      include: {
-        model: Class,
-      }
+      include: [
+        {model: Class},
+        {model: Role}
+      ],
     });
 
     res.status(200).send(result);
