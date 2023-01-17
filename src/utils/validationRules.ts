@@ -1,6 +1,6 @@
 import Validator, { Rules } from 'validatorjs';
 
-export function validateData(data: {[key: string | number]: string | number}, rules: Rules) {
+export function validateData(data: { [key: string | number]: string | number }, rules: Rules) {
   const validation = new Validator(data, rules);
 
   if (validation.fails()) throw { errorMessage: validation.errors.all() };
@@ -185,5 +185,19 @@ export const editMemberRules = {
 }
 
 export const removeMemberRules = {
+  id: 'integer|required',
+}
+
+//notifications
+export const addNotificationRules = {
+  title: 'string|required',
+  text: 'string|required',
+}
+
+export const readNotificationRules = {
+  id: 'integer|required',
+}
+
+export const removeNotificationRules = {
   id: 'integer|required',
 }

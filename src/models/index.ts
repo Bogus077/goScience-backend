@@ -22,6 +22,8 @@ import { Member } from './Member';
 import { Role } from './Role';
 import { UserRole } from './UserRole';
 import { MemberLogs } from './MemberLogs';
+import { Notifications } from './Notifications';
+import { UserNotifications } from './UserNotifications';
 
 export {
   User, 
@@ -47,6 +49,8 @@ export {
   Role,
   UserRole,
   MemberLogs,
+  Notifications,
+  UserNotifications,
 };
 
 User.hasMany(UserRefresh);
@@ -114,3 +118,9 @@ Kid.hasMany(KidSummaryUser);
 //Logs
 User.hasMany(MemberLogs);
 MemberLogs.belongsTo(User);
+
+//Notifications
+User.hasMany(UserNotifications);
+UserNotifications.belongsTo(User);
+Notifications.hasMany(UserNotifications);
+UserNotifications.belongsTo(Notifications);

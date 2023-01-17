@@ -11,6 +11,7 @@ import { router as ProjectRouter } from './routes/project.router';
 import { router as SummaryRouter } from './routes/summary.router';
 import { router as MembersRouter } from './routes/members.router';
 import { router as AuthRouter } from './routes/auth.router';
+import { router as NotifiationsRouter } from './routes/notification.router';
 import { serverConfig } from './config/config';
 import cors from 'cors';
 import { onConnection } from './utils/socket/connection';
@@ -37,6 +38,7 @@ app.use('/project', ProjectRouter);
 app.use('/summary', SummaryRouter);
 app.use('/members', MembersRouter);
 app.use('/auth', AuthRouter);
+app.use('/notifications', NotifiationsRouter);
 app.get('/', (request, response) => {
   response.send('Hello, Hackerman!');
 });
