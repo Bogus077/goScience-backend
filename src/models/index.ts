@@ -24,13 +24,16 @@ import { UserRole } from './UserRole';
 import { MemberLogs } from './MemberLogs';
 import { Notifications } from './Notifications';
 import { UserNotifications } from './UserNotifications';
+import { MemberAttendance } from './MembersAttandance';
+import { MemberContact } from './MemberContact';
+import { Teacher } from './Teacher';
 
 export {
-  User, 
-  Class, 
-  UserClass, 
-  Kid, 
-  TasksDay, 
+  User,
+  Class,
+  UserClass,
+  Kid,
+  TasksDay,
   TasksWeek,
   TasksMonth,
   TasksQuarter,
@@ -51,6 +54,9 @@ export {
   MemberLogs,
   Notifications,
   UserNotifications,
+  MemberAttendance,
+  MemberContact,
+  Teacher,
 };
 
 User.hasMany(UserRefresh);
@@ -73,11 +79,11 @@ TasksWeek.belongsTo(Kid);
 TasksMonth.belongsTo(Kid);
 TasksQuarter.belongsTo(Kid);
 
-User.belongsToMany(Class, {through: UserClass});
-Class.belongsToMany(User, {through: UserClass});
+User.belongsToMany(Class, { through: UserClass });
+Class.belongsToMany(User, { through: UserClass });
 
-User.belongsToMany(Role, {through: UserRole});
-Role.belongsToMany(User, {through: UserRole});
+User.belongsToMany(Role, { through: UserRole });
+Role.belongsToMany(User, { through: UserRole });
 
 //Stats
 User.hasMany(StatsTask);
@@ -88,8 +94,8 @@ TasksDay.hasOne(StatsTask);
 StatsTask.belongsTo(TasksDay);
 
 //Projects
-Kid.belongsToMany(Team, {through: KidTeam});
-Team.belongsToMany(Kid, {through: KidTeam});
+Kid.belongsToMany(Team, { through: KidTeam });
+Team.belongsToMany(Kid, { through: KidTeam });
 
 Project.belongsTo(Team);
 Team.hasMany(Project);
@@ -97,8 +103,8 @@ Team.hasMany(Project);
 ProjectTask.belongsTo(Project);
 Project.hasMany(ProjectTask);
 
-Kid.belongsToMany(ProjectTask, {through: KidProjectTask});
-ProjectTask.belongsToMany(Kid, {through: KidProjectTask});
+Kid.belongsToMany(ProjectTask, { through: KidProjectTask });
+ProjectTask.belongsToMany(Kid, { through: KidProjectTask });
 
 User.hasMany(Team);
 Team.belongsTo(User);
@@ -124,3 +130,11 @@ User.hasMany(UserNotifications);
 UserNotifications.belongsTo(User);
 Notifications.hasMany(UserNotifications);
 UserNotifications.belongsTo(Notifications);
+
+//MembersAttendance
+Member.hasMany(MemberAttendance);
+MemberAttendance.belongsTo(Member);
+
+//Contacts
+Member.hasMany(MemberContact);
+MemberContact.belongsTo(Member);

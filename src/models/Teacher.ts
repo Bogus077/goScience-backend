@@ -1,8 +1,8 @@
 const { sequelize } = require('../database/database.config');
 import { DataTypes as Sequelize } from "sequelize";
 
-export const Member = sequelize.define(
-  'Member',
+export const Teacher = sequelize.define(
+  'Teacher',
   {
     id: {
       allowNull: false,
@@ -16,22 +16,23 @@ export const Member = sequelize.define(
     surname: {
       type: Sequelize.STRING,
     },
-    dob: {
-      allowNull: true,
-      type: Sequelize.DATE
-    },
-    sex: {
+    middlename: {
       type: Sequelize.STRING,
     },
-    plat: {
-      type: Sequelize.INTEGER,
-    },
-    status: {
+    phone: {
       type: Sequelize.STRING,
     },
     isDeleted: {
       type: Sequelize.BOOLEAN,
     },
+    createdAt: {
+      allowNull: false,
+      type: Sequelize.DATE
+    },
+    updatedAt: {
+      allowNull: false,
+      type: Sequelize.DATE
+    }
   },
   {
     freezeTableName: true,

@@ -201,3 +201,28 @@ export const readNotificationRules = {
 export const removeNotificationRules = {
   id: 'integer|required',
 }
+
+//attendance
+export const memberAttendanceRules = {
+  id: 'integer|required',
+}
+
+//teachers
+export const addTeacherRules = {
+  name: 'string|required',
+  surname: 'string|required',
+  middlename: 'string|required',
+  phone: 'string|required',
+}
+
+export const removeTeacherRules = {
+  id: 'integer|required',
+}
+
+export const editTeacherRules = {
+  id: 'integer|required',
+  name: 'string|required',
+  surname: 'string|required',
+  middlename: 'string|required',
+  phone: 'string|required',
+}

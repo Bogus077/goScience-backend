@@ -8,6 +8,8 @@ import {
   getMembersLogsRequest,
   removeMembersRequest,
   editMemberRequest,
+  getAttendanceRequest,
+  getMemberAttendanceRequest,
 } from '../controllers/members.controller';
 const jsonParser = bodyParser.json();
 import { verifyJWT, isAdmin, isOfficer } from '../middlewares';
@@ -20,3 +22,5 @@ router.post('/status', [verifyJWT, isOfficer], changeMemberStatusRequest);
 router.get('/logs', [verifyJWT, isAdmin], getMembersLogsRequest);
 router.post('/edit', [verifyJWT, isOfficer], editMemberRequest);
 router.post('/remove', [verifyJWT, isOfficer], removeMembersRequest);
+router.get('/attendance', [verifyJWT, isOfficer], getAttendanceRequest);
+router.post('/memberAttendance', [verifyJWT, isOfficer], getMemberAttendanceRequest);
