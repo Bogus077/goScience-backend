@@ -29,6 +29,14 @@ export const Member = sequelize.define(
     status: {
       type: Sequelize.STRING,
     },
+    email: {
+      type: Sequelize.STRING,
+      unique: false,
+    },
+    password: {
+      type: Sequelize.STRING,
+      unique: false,
+    },
     isDeleted: {
       type: Sequelize.BOOLEAN,
     },

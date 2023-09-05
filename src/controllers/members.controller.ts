@@ -14,7 +14,6 @@ export async function getMembersRequest(req: Request & { jwt: JwtPayload }, res:
       where: { isDeleted: false || null },
       include: MemberContact,
     });
-
     res.status(200).send(result);
   } catch (error) {
     res.status(500).send(error);

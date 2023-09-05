@@ -2,16 +2,44 @@ import { Request, Response } from 'express';
 import { Kid, KidProjectTask, KidSummaryProjectTask, KidTeam, Member, MemberAttendance, MemberContact, Project, ProjectTask, Team } from '../../models';
 import { createMembersAddUserLog, createMembersEditUserLog, createMembersRemoveUserLog } from '../memberLogs/logs';
 import { validateData, addMemberRules, changeMemberStatusRules, removeMemberRules, editMemberRules, memberAttendanceRules } from '../validationRules';
+import { transliterate as tr, slugify } from 'transliteration';
+import { Op } from "sequelize";
+
+// Добавление сгенерированных почтовых адресов
+// export const addEmails = async () => {
+//   const members = await Member.findAll();
+//   members.map((member: any) => {
+//     const email = `${slugify(`${member.surname} ${member.name}`)}@kk-a.ru`
+//     Member.update({ email, password: 'kkUnost123' }, { where: { id: member.id } })
+//   })
+// }
+
+// Удаление старой статистики посещений
+// export const clearAttendanceStats = async () => {
+//   const date = new Date(2023, 8, 1);
+//   const result = await MemberAttendance.destroy({
+//     where: {
+//       createdAt: {
+//         [Op.lt]: date
+//       }
+//     }
+//   });
+// }
+
+
 
 export const addMember = async (req: Request['body'], UserId: number) => {
   validateData(req, addMemberRules);
   const { name, surname, sex, plat, dob, contactName, contactPhone, contactAddress } = req;
+  const email = `${slugify(`${surname} ${name}`)}@kk-a.ru`
   const newMember = {
     name,
     surname,
     sex,
     plat,
-    dob
+    dob,
+    email,
+    password: 'kkUnost123'
   }
 
   const result = await Member.create(newMember);
@@ -60,7 +88,7 @@ export const changeMemberStatus = async (req: Request['body']) => {
 
 export const editMember = async (req: Request['body'], UserId: number) => {
   validateData(req, editMemberRules);
-  const { id, name, surname, sex, plat, dob, contactName, contactPhone, contactAddress } = req;
+  const { id, name, surname, sex, plat, dob, contactName, contactPhone, contactAddress, email, password } = req;
 
   const member = await Member.findOne({ where: { id } });
   if (!member) throw { errorMessage: 'Ученик не найден' };
@@ -70,7 +98,9 @@ export const editMember = async (req: Request['body'], UserId: number) => {
     surname,
     sex,
     plat,
-    dob
+    dob,
+    email,
+    password
   };
 
   const result = await member.update(newMember);
