@@ -2,11 +2,15 @@ import { sequelize } from '../database/database.config';
 import { CreationOptional, DataTypes as Sequelize, ForeignKey, InferAttributes, InferCreationAttributes, Model } from "sequelize";
 import { User } from "./User";
 
-export class UserRefresh extends Model<InferAttributes<UserRefresh>, InferCreationAttributes<UserRefresh>> {
+export class Event extends Model<InferAttributes<Event>, InferCreationAttributes<Event>> {
   declare id: CreationOptional<number>;
-  declare UserId: ForeignKey<User['id']>;
-  declare refresh: string;
-  declare used: boolean;
+  declare title: string;
+  declare startAddress: string;
+  declare finishAddress: string;
+  declare createdBy: ForeignKey<User['id']>;
+  declare createdDate: Date;
+  declare startDate: Date;
+  declare isDeleted: CreationOptional<boolean | null>;
 
   // createdAt can be undefined during creation
   declare createdAt: CreationOptional<Date>;
@@ -14,7 +18,7 @@ export class UserRefresh extends Model<InferAttributes<UserRefresh>, InferCreati
   declare updatedAt: CreationOptional<Date>;
 }
 
-UserRefresh.init(
+Event.init(
   {
     id: {
       allowNull: false,
@@ -22,7 +26,16 @@ UserRefresh.init(
       primaryKey: true,
       type: Sequelize.INTEGER
     },
-    UserId: {
+    title: {
+      type: Sequelize.STRING,
+    },
+    startAddress: {
+      type: Sequelize.STRING,
+    },
+    finishAddress: {
+      type: Sequelize.STRING,
+    },
+    createdBy: {
       allowNull: false,
       type: Sequelize.INTEGER,
       references: {
@@ -31,11 +44,14 @@ UserRefresh.init(
       },
       unique: false,
     },
-    refresh: {
-      type: Sequelize.STRING
+    createdDate: {
+      type: Sequelize.DATE
     },
-    used: {
-      type: Sequelize.BOOLEAN
+    startDate: {
+      type: Sequelize.DATE
+    },
+    isDeleted: {
+      type: Sequelize.BOOLEAN,
     },
     createdAt: {
       allowNull: false,
@@ -48,6 +64,6 @@ UserRefresh.init(
   },
   {
     sequelize,
-    tableName: 'UserRefresh'
+    tableName: 'Event'
   }
 )

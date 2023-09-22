@@ -1,8 +1,17 @@
-const { sequelize } = require('../database/database.config');
-import { DataTypes as Sequelize } from "sequelize";
+import { sequelize } from '../database/database.config';
+import { Association, CreationOptional, DataTypes as Sequelize, ForeignKey, InferAttributes, InferCreationAttributes, Model, NonAttribute } from "sequelize";
 
-export const Class = sequelize.define(
-  'Class',
+export class Class extends Model<InferAttributes<Class>, InferCreationAttributes<Class>> {
+  declare id: CreationOptional<number>;
+  declare label: string;
+
+  // createdAt can be undefined during creation
+  declare createdAt: CreationOptional<Date>;
+  // updatedAt can be undefined during creation
+  declare updatedAt: CreationOptional<Date>;
+}
+
+Class.init(
   {
     id: {
       allowNull: false,
@@ -13,9 +22,17 @@ export const Class = sequelize.define(
     label: {
       type: Sequelize.STRING
     },
+    createdAt: {
+      allowNull: false,
+      type: Sequelize.DATE
+    },
+    updatedAt: {
+      allowNull: false,
+      type: Sequelize.DATE
+    }
   },
   {
-    freezeTableName: true,
-    timestamps: true,
+    sequelize,
+    tableName: 'Class'
   }
-);
+)

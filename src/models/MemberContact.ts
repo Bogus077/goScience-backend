@@ -1,8 +1,21 @@
-const { sequelize } = require('../database/database.config');
-import { DataTypes as Sequelize } from "sequelize";
+import { sequelize } from '../database/database.config';
+import { Association, CreationOptional, DataTypes as Sequelize, ForeignKey, InferAttributes, InferCreationAttributes, Model, NonAttribute } from "sequelize";
+import { Member } from './Member';
 
-export const MemberContact = sequelize.define(
-  'MemberContact',
+export class MemberContact extends Model<InferAttributes<MemberContact>, InferCreationAttributes<MemberContact>> {
+  declare id: CreationOptional<number>;
+  declare MemberId: ForeignKey<Member['id']>;
+  declare name: string;
+  declare phone: string;
+  declare address: string;
+
+  // createdAt can be undefined during creation
+  declare createdAt: CreationOptional<Date>;
+  // updatedAt can be undefined during creation
+  declare updatedAt: CreationOptional<Date>;
+}
+
+MemberContact.init(
   {
     id: {
       allowNull: false,
@@ -28,9 +41,17 @@ export const MemberContact = sequelize.define(
     address: {
       type: Sequelize.STRING,
     },
+    createdAt: {
+      allowNull: false,
+      type: Sequelize.DATE
+    },
+    updatedAt: {
+      allowNull: false,
+      type: Sequelize.DATE
+    }
   },
   {
-    freezeTableName: true,
-    timestamps: true,
+    sequelize,
+    tableName: 'MemberContact'
   }
-);
+)

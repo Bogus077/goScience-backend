@@ -1,8 +1,20 @@
-const { sequelize } = require('../database/database.config');
-import { DataTypes as Sequelize } from "sequelize";
+import { sequelize } from '../database/database.config';
+import { CreationOptional, DataTypes as Sequelize, ForeignKey, InferAttributes, InferCreationAttributes, Model } from "sequelize";
+import { User } from "./User";
+import { Class } from './Class';
 
-export const UserSettings = sequelize.define(
-  'UserSettings',
+export class UserSettings extends Model<InferAttributes<UserSettings>, InferCreationAttributes<UserSettings>> {
+  declare id: CreationOptional<number>;
+  declare UserId: ForeignKey<User['id']>;
+  declare ClassId: ForeignKey<Class['id']>;
+
+  // createdAt can be undefined during creation
+  declare createdAt: CreationOptional<Date>;
+  // updatedAt can be undefined during creation
+  declare updatedAt: CreationOptional<Date>;
+}
+
+UserSettings.init(
   {
     id: {
       allowNull: false,
@@ -28,9 +40,17 @@ export const UserSettings = sequelize.define(
       },
       unique: false,
     },
+    createdAt: {
+      allowNull: false,
+      type: Sequelize.DATE
+    },
+    updatedAt: {
+      allowNull: false,
+      type: Sequelize.DATE
+    }
   },
   {
-    freezeTableName: true,
-    timestamps: true,
+    sequelize,
+    tableName: 'UserSettings'
   }
-);
+)

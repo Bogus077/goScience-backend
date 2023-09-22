@@ -1,8 +1,19 @@
-const { sequelize } = require('../database/database.config');
-import { DataTypes as Sequelize } from "sequelize";
+import { sequelize } from '../database/database.config';
+import { CreationOptional, DataTypes as Sequelize, ForeignKey, InferAttributes, InferCreationAttributes, Model } from "sequelize";
+import { User } from "./User";
 
-export const MemberLogs = sequelize.define(
-  'MemberLogs',
+export class MemberLogs extends Model<InferAttributes<MemberLogs>, InferCreationAttributes<MemberLogs>> {
+  declare id: CreationOptional<number>;
+  declare UserId: ForeignKey<User['id']>;
+  declare log: string;
+
+  // createdAt can be undefined during creation
+  declare createdAt: CreationOptional<Date>;
+  // updatedAt can be undefined during creation
+  declare updatedAt: CreationOptional<Date>;
+}
+
+MemberLogs.init(
   {
     id: {
       allowNull: false,
@@ -22,9 +33,17 @@ export const MemberLogs = sequelize.define(
     log: {
       type: Sequelize.STRING,
     },
+    createdAt: {
+      allowNull: false,
+      type: Sequelize.DATE
+    },
+    updatedAt: {
+      allowNull: false,
+      type: Sequelize.DATE
+    }
   },
   {
-    freezeTableName: true,
-    timestamps: true,
+    sequelize,
+    tableName: 'MemberLogs'
   }
-);
+)

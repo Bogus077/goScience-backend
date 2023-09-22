@@ -1,8 +1,25 @@
-const { sequelize } = require('../database/database.config');
-import { DataTypes as Sequelize } from "sequelize";
+import { sequelize } from '../database/database.config';
+import { Association, CreationOptional, DataTypes as Sequelize, ForeignKey, InferAttributes, InferCreationAttributes, Model, NonAttribute } from "sequelize";
 
-export const Member = sequelize.define(
-  'Member',
+export class Member extends Model<InferAttributes<Member>, InferCreationAttributes<Member>> {
+  declare id: CreationOptional<number>;
+  declare name: string;
+  declare surname: string;
+  declare dob: Date;
+  declare sex: string;
+  declare plat: number;
+  declare status: string;
+  declare email: string;
+  declare password: string;
+  declare isDeleted: CreationOptional<boolean | null>;
+
+  // createdAt can be undefined during creation
+  declare createdAt: CreationOptional<Date>;
+  // updatedAt can be undefined during creation
+  declare updatedAt: CreationOptional<Date>;
+}
+
+Member.init(
   {
     id: {
       allowNull: false,
@@ -40,9 +57,17 @@ export const Member = sequelize.define(
     isDeleted: {
       type: Sequelize.BOOLEAN,
     },
+    createdAt: {
+      allowNull: false,
+      type: Sequelize.DATE
+    },
+    updatedAt: {
+      allowNull: false,
+      type: Sequelize.DATE
+    }
   },
   {
-    freezeTableName: true,
-    timestamps: true,
+    sequelize,
+    tableName: 'Member'
   }
-);
+)

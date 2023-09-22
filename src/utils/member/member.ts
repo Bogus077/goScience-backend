@@ -40,7 +40,7 @@ export const addMember = async (req: Request['body'], UserId: number) => {
     dob,
     email,
     password: 'kkUnost123'
-  }
+  } as Member
 
   const result = await Member.create(newMember);
 
@@ -80,7 +80,7 @@ export const changeMemberStatus = async (req: Request['body']) => {
   const newMember = {
     id,
     status: status ? true : null,
-  }
+  } as unknown as Member;
 
   const result = await member.update(newMember);
   return result;
@@ -122,7 +122,7 @@ export const editMember = async (req: Request['body'], UserId: number) => {
       MemberId: id,
     }
   })
-  await memberContact.update({
+  if (memberContact) await memberContact.update({
     name: contactName ?? '',
     phone: contactPhone ?? '',
     address: contactAddress ?? '',
@@ -136,7 +136,7 @@ export const editMember = async (req: Request['body'], UserId: number) => {
 export const dailyAttendance = async () => {
   try {
     const members = await Member.findAll({ where: { isDeleted: false || null } });
-    const attendance = members.map((member: typeof Member) => {
+    const attendance = members.map((member: Member) => {
       return {
         MemberId: member.id,
         type: member.status ? 'in' : 'out',

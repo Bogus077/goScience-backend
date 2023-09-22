@@ -1,8 +1,18 @@
-const { sequelize } = require('../database/database.config');
-import { DataTypes as Sequelize } from "sequelize";
+import { sequelize } from '../database/database.config';
+import { CreationOptional, DataTypes as Sequelize, ForeignKey, InferAttributes, InferCreationAttributes, Model } from "sequelize";
+import { User } from "./User";
 
-export const Role = sequelize.define(
-  'Role',
+export class Role extends Model<InferAttributes<Role>, InferCreationAttributes<Role>> {
+  declare id: CreationOptional<number>;
+  declare name: string;
+
+  // createdAt can be undefined during creation
+  declare createdAt: CreationOptional<Date>;
+  // updatedAt can be undefined during creation
+  declare updatedAt: CreationOptional<Date>;
+}
+
+Role.init(
   {
     id: {
       allowNull: false,
@@ -13,9 +23,17 @@ export const Role = sequelize.define(
     name: {
       type: Sequelize.STRING,
     },
+    createdAt: {
+      allowNull: false,
+      type: Sequelize.DATE
+    },
+    updatedAt: {
+      allowNull: false,
+      type: Sequelize.DATE
+    }
   },
   {
-    freezeTableName: true,
-    timestamps: true,
+    sequelize,
+    tableName: 'Role'
   }
-);
+)

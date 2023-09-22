@@ -1,12 +1,13 @@
 import { sequelize } from '../database/database.config';
 import { CreationOptional, DataTypes as Sequelize, ForeignKey, InferAttributes, InferCreationAttributes, Model } from "sequelize";
 import { User } from "./User";
+import { Member } from './Member';
+import { Event } from './Event';
 
-export class UserRefresh extends Model<InferAttributes<UserRefresh>, InferCreationAttributes<UserRefresh>> {
+export class EventMember extends Model<InferAttributes<EventMember>, InferCreationAttributes<EventMember>> {
   declare id: CreationOptional<number>;
-  declare UserId: ForeignKey<User['id']>;
-  declare refresh: string;
-  declare used: boolean;
+  declare MemberId: ForeignKey<Member['id']>;
+  declare EventId: ForeignKey<Event['id']>;
 
   // createdAt can be undefined during creation
   declare createdAt: CreationOptional<Date>;
@@ -14,7 +15,7 @@ export class UserRefresh extends Model<InferAttributes<UserRefresh>, InferCreati
   declare updatedAt: CreationOptional<Date>;
 }
 
-UserRefresh.init(
+EventMember.init(
   {
     id: {
       allowNull: false,
@@ -22,20 +23,23 @@ UserRefresh.init(
       primaryKey: true,
       type: Sequelize.INTEGER
     },
-    UserId: {
+    MemberId: {
       allowNull: false,
       type: Sequelize.INTEGER,
       references: {
-        model: 'User',
+        model: 'Member',
         key: 'id',
       },
       unique: false,
     },
-    refresh: {
-      type: Sequelize.STRING
-    },
-    used: {
-      type: Sequelize.BOOLEAN
+    EventId: {
+      allowNull: false,
+      type: Sequelize.INTEGER,
+      references: {
+        model: 'Event',
+        key: 'id',
+      },
+      unique: false,
     },
     createdAt: {
       allowNull: false,
@@ -48,6 +52,6 @@ UserRefresh.init(
   },
   {
     sequelize,
-    tableName: 'UserRefresh'
+    tableName: 'EventMember'
   }
 )

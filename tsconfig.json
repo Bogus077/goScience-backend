@@ -3,7 +3,7 @@
     "esModuleInterop": true,
     "outDir": "dist",
     "baseUrl": ".",
-    "target": "es5",                                
+    "target": "es2021",                                
     "module": "commonjs",                           
     "sourceMap": true, 
     "strict": true,                              

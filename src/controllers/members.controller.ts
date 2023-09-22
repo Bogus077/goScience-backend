@@ -6,7 +6,7 @@ import { TasksDay, TasksWeek, TasksQuarter, Member, MemberLogs, MemberAttendance
 import { JwtPayload } from '../middlewares/authJwt';
 import { changeSummaryStatus, createKidUserSummary, getKidSummary } from '../utils/summary/summary';
 import { addMember, changeMemberStatus, editMember, memberAttendance, removeMember } from '../utils/member/member';
-import { Op, Sequelize } from 'sequelize/dist';
+import { Op, Sequelize } from 'sequelize';
 
 export async function getMembersRequest(req: Request & { jwt: JwtPayload }, res: Response) {
   try {
@@ -73,7 +73,7 @@ export async function getMembersLogsRequest(req: Request & { jwt: JwtPayload }, 
       {
         where: filters,
         order: [['id', 'DESC']],
-        limit
+        limit: limit as number
       });
 
     res.status(200).send(result);
@@ -84,8 +84,8 @@ export async function getMembersLogsRequest(req: Request & { jwt: JwtPayload }, 
 
 export async function getAttendanceRequest(req: Request & { jwt: JwtPayload }, res: Response) {
   try {
-    const MemberId = req.query.kid;
-    const result = await MemberAttendance.findAll(MemberId ? { where: { MemberId } } : { limit: 30000 });
+    const MemberId = req.query.kid as unknown as number;
+    const result = MemberId ? await MemberAttendance.findAll({ where: { MemberId } }) : await MemberAttendance.findAll({ limit: 30000 });
 
     res.status(200).send(result);
   } catch (error) {

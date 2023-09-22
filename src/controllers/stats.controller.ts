@@ -1,10 +1,10 @@
 import { Request, Response } from 'express'
 import { StatsTask } from '../models/index';
 import { JwtPayload } from 'src/middlewares/authJwt';
-import { Op } from 'sequelize/dist';
+import { Op } from 'sequelize';
 
-export async function getUserStats(req: Request & {jwt: JwtPayload}, res: Response) {
-  try{
+export async function getUserStats(req: Request & { jwt: JwtPayload }, res: Response) {
+  try {
     const today = new Date();
     today.setHours(0);
     today.setMinutes(0);
@@ -21,7 +21,7 @@ export async function getUserStats(req: Request & {jwt: JwtPayload}, res: Respon
     });
 
     res.status(200).send(result);
-  }catch(error){
+  } catch (error) {
     res.status(500).send(error);
   }
 }

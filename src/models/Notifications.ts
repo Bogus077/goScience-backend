@@ -1,8 +1,20 @@
-const { sequelize } = require('../database/database.config');
-import { DataTypes as Sequelize } from "sequelize";
+import { sequelize } from '../database/database.config';
+import { CreationOptional, DataTypes as Sequelize, ForeignKey, InferAttributes, InferCreationAttributes, Model } from "sequelize";
+import { User } from "./User";
 
-export const Notifications = sequelize.define(
-  'Notifications',
+export class Notifications extends Model<InferAttributes<Notifications>, InferCreationAttributes<Notifications>> {
+  declare id: CreationOptional<number>;
+  declare title: string;
+  declare text: string;
+  declare type: CreationOptional<string>;
+
+  // createdAt can be undefined during creation
+  declare createdAt: CreationOptional<Date>;
+  // updatedAt can be undefined during creation
+  declare updatedAt: CreationOptional<Date>;
+}
+
+Notifications.init(
   {
     id: {
       allowNull: false,
@@ -20,9 +32,17 @@ export const Notifications = sequelize.define(
       allowNull: true,
       type: Sequelize.STRING,
     },
+    createdAt: {
+      allowNull: false,
+      type: Sequelize.DATE
+    },
+    updatedAt: {
+      allowNull: false,
+      type: Sequelize.DATE
+    }
   },
   {
-    freezeTableName: true,
-    timestamps: true,
+    sequelize,
+    tableName: 'Notifications'
   }
-);
+)

@@ -47,7 +47,7 @@ export const verifyOfficerRole = async (socket: any, next: any) => {
     return;
   };
 
-  const result = roles.find((role: typeof UserRole) => role.RoleId === officerRole.id);
+  const result = roles.find((role: UserRole) => role.RoleId === officerRole.id);
   if (!result) {
     next(new Error(`Officer permissions required`));
     console.log('========================')
@@ -57,7 +57,7 @@ export const verifyOfficerRole = async (socket: any, next: any) => {
     console.log('========================')
     console.log('========================')
     return;
-  };  
+  };
 
   next();
 }

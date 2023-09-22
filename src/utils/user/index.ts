@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import bcrypt from 'bcrypt';
 import { validateData, userSignUpRules, userLoginRules, addRoleRules, addRoleToUserRules } from '../validationRules';
-import {sequelize} from '../../database/database.config';
+import { sequelize } from '../../database/database.config';
 import { User, Class, Role, UserRole } from '../../models/index';
 import { createRefreshToken, createToken } from '../token';
 
@@ -14,7 +14,7 @@ export const signUpNewUser = async (requestData: Request['body']) => {
   validateData(requestData, userSignUpRules);
 
   const isPhoneExist = await checkIsPhoneAlreadyExist(requestData.phone);
-  if(isPhoneExist.phoneExist){
+  if (isPhoneExist.phoneExist) {
     throw { errorMessage: 'Телефон уже используется' };
   }
 
@@ -26,11 +26,11 @@ export const signUpNewUser = async (requestData: Request['body']) => {
 export const UserlogIn = async (requestData: Request['body']) => {
   validateData(requestData, userLoginRules);
 
-  const user = await User.findOne({where: {phone: requestData.phone}})
-  if(!user){
+  const user = await User.findOne({ where: { phone: requestData.phone } })
+  if (!user) {
     throw { errorMessage: 'User not found' };
   }
-   
+
   await checkPassword(requestData.password, user);
 
   const logInResult = {
@@ -42,24 +42,24 @@ export const UserlogIn = async (requestData: Request['body']) => {
 }
 
 /** Compare password via database */
-export const checkPassword = async (password: string, user: typeof User) => {
+export const checkPassword = async (password: string, user: User) => {
   const isPasswordValid = await bcrypt.compare(password, user.password);
   if (!isPasswordValid) throw { errorMessage: `Invalid password` };
 }
 
 /** Check user phone number if it's already exists in DB */
 export const checkIsPhoneAlreadyExist = async (phone: string) => {
-  if(!phone){
+  if (!phone) {
     throw { errorMessage: 'Телефон не указан' };
   }
 
-  const user = await User.findOne({where: {phone}});
+  const user = await User.findOne({ where: { phone } });
 
   // if(user){
   //   throw { errorMessage: 'Телефон уже используется' };
   // }
 
-  return {phoneExist: user ? user.id : false};
+  return { phoneExist: user ? user.id : false };
 }
 
 export const createRole = async (req: Request['body']) => {
@@ -85,9 +85,9 @@ export const removeRoleFromUser = async (req: Request['body']) => {
   const { UserId, RoleId } = req;
 
   const role = await UserRole.findOne({ where: { UserId, RoleId } });
-  if(!role) throw { errorMessage: 'UserRole not found' };
+  if (!role) throw { errorMessage: 'UserRole not found' };
 
   await role.destroy();
 
-  return {result: 'deleted'};
+  return { result: 'deleted' };
 }
