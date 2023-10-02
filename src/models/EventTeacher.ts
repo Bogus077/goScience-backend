@@ -1,12 +1,11 @@
 import { sequelize } from '../database/database.config';
 import { CreationOptional, DataTypes as Sequelize, ForeignKey, InferAttributes, InferCreationAttributes, Model } from "sequelize";
-import { User } from "./User";
-import { Member } from './Member';
 import { Event } from './Event';
+import { Teacher } from './Teacher';
 
-export class EventUser extends Model<InferAttributes<EventUser>, InferCreationAttributes<EventUser>> {
+export class EventTeacher extends Model<InferAttributes<EventTeacher>, InferCreationAttributes<EventTeacher>> {
   declare id: CreationOptional<number>;
-  declare UserId: ForeignKey<User['id']>;
+  declare TeacherId: ForeignKey<Teacher['id']>;
   declare EventId: ForeignKey<Event['id']>;
 
   // createdAt can be undefined during creation
@@ -15,7 +14,7 @@ export class EventUser extends Model<InferAttributes<EventUser>, InferCreationAt
   declare updatedAt: CreationOptional<Date>;
 }
 
-EventUser.init(
+EventTeacher.init(
   {
     id: {
       allowNull: false,
@@ -23,11 +22,11 @@ EventUser.init(
       primaryKey: true,
       type: Sequelize.INTEGER
     },
-    UserId: {
+    TeacherId: {
       allowNull: false,
       type: Sequelize.INTEGER,
       references: {
-        model: 'User',
+        model: 'Teacher',
         key: 'id',
       },
       unique: false,
@@ -52,6 +51,6 @@ EventUser.init(
   },
   {
     sequelize,
-    tableName: 'EventUser'
+    tableName: 'EventTeacher'
   }
 )

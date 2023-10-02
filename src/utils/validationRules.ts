@@ -226,3 +226,25 @@ export const editTeacherRules = {
   middlename: 'string|required',
   phone: 'string|required',
 }
+
+//events
+export const addEventRules = {
+  title: 'string|required',
+  startAddress: 'string|required',
+  finishAddress: 'string|required',
+  createdDate: 'integer|required',
+  startDate: 'integer|required',
+}
+
+export const updateEventRules = {
+  id: 'integer|required',
+  title: 'string|required',
+  startAddress: 'string|required',
+  finishAddress: 'string|required',
+  createdDate: 'integer|required',
+  startDate: 'integer|required',
+}
+
+export const removeEventRules = {
+  id: 'integer|required',
+}

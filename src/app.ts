@@ -13,6 +13,7 @@ import { router as MembersRouter } from './routes/members.router';
 import { router as AuthRouter } from './routes/auth.router';
 import { router as NotifiationsRouter } from './routes/notification.router';
 import { router as TeachersRouter } from './routes/teacher.router';
+import { router as EventRouter } from './routes/event.router';
 import { serverConfig } from './config/config';
 import schedule from 'node-schedule';
 import cors from 'cors';
@@ -43,6 +44,7 @@ app.use('/members', MembersRouter);
 app.use('/auth', AuthRouter);
 app.use('/notifications', NotifiationsRouter);
 app.use('/teacher', TeachersRouter);
+app.use('/event', EventRouter);
 app.get('/', (request, response) => {
   response.send('Hello, Hackerman!');
 });
