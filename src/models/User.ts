@@ -7,6 +7,8 @@ export class User extends Model<InferAttributes<User>, InferCreationAttributes<U
   declare password: string;
   declare name: string;
   declare surname: string;
+  declare middleName: string;
+  declare isDeleted: boolean;
 
   // createdAt can be undefined during creation
   declare createdAt: CreationOptional<Date>;
@@ -33,6 +35,12 @@ User.init(
     },
     surname: {
       type: Sequelize.STRING
+    },
+    middleName: {
+      type: Sequelize.STRING
+    },
+    isDeleted: {
+      type: Sequelize.BOOLEAN
     },
     createdAt: {
       allowNull: false,

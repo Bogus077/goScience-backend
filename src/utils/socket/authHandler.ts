@@ -1,10 +1,10 @@
 import { NextFunction } from "express";
-import jwt, { GetPublicKeyOrSecret, Secret } from "jsonwebtoken";
+import jwt, { GetPublicKeyOrSecret, JwtPayload, Secret } from "jsonwebtoken";
 import { Socket } from "socket.io";
 import { Role, UserRole } from "../../models";
 import { jwtSecret } from "../../config/config";
 
-export const verifyJwtSocket = async (socket: any, next: any) => {
+export const verifyJwtSocket = async (socket: Socket & { jwt?: string | JwtPayload }, next: any) => {
   const { token, refreshToken } = socket.handshake.auth;
 
   if (!token) {
@@ -14,9 +14,11 @@ export const verifyJwtSocket = async (socket: any, next: any) => {
   const secret = jwtSecret as Secret | GetPublicKeyOrSecret;
   jwt.verify(token, secret, (err, decoded) => {
     if (err) {
+      console.log('token error');
       next(new Error(err.message ?? `Invalid token!`));
       return;
     }
+    console.log('token success');
     socket.jwt = decoded;
     next();
   });

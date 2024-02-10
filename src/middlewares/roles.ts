@@ -25,6 +25,30 @@ export const isAdmin = async (req: Request & { jwt: JwtPayload }, res: Response,
   next();
 }
 
+export const isAdminOrHead = async (req: Request & { jwt: JwtPayload }, res: Response, next: NextFunction) => {
+  const { id: UserId } = req.jwt;
+
+  const roles = await UserRole.findAll({ where: { UserId } });
+  const adminRole = await Role.findOne({ where: { name: 'admin' } });
+  if (!adminRole) {
+    res.status(403).send({ message: `AdminRole not found` });
+    return;
+  };
+  const headRole = await Role.findOne({ where: { name: 'head' } });
+  if (!headRole) {
+    res.status(403).send({ message: `HeadRole not found` });
+    return;
+  };
+
+  const result = roles.find((role: UserRole) => role.RoleId === adminRole.id || role.RoleId === headRole.id);
+  if (!result) {
+    res.status(403).send({ message: `Admin or Head permissions required` });
+    return;
+  };
+
+  next();
+}
+
 export const isOfficer = async (req: Request & { jwt: JwtPayload }, res: Response, next: NextFunction) => {
   const { id: UserId } = req.jwt;
 

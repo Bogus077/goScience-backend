@@ -12,7 +12,6 @@ import { router as SummaryRouter } from './routes/summary.router';
 import { router as MembersRouter } from './routes/members.router';
 import { router as AuthRouter } from './routes/auth.router';
 import { router as NotifiationsRouter } from './routes/notification.router';
-import { router as TeachersRouter } from './routes/teacher.router';
 import { router as EventRouter } from './routes/event.router';
 import { serverConfig } from './config/config';
 import schedule from 'node-schedule';
@@ -26,8 +25,10 @@ import { verifyJwtSocket, verifyOfficerRole } from './utils/socket/authHandler';
 import { dailyAttendance } from './utils/member/member';
 const io = new Server(server, {
   cors: {
-    origin: '*'
-  }
+    origin: '*',
+  },
+  allowEIO3: true,
+  transports: ['websocket', 'polling'],
 });
 
 // app.use(tokenValidation);
@@ -43,16 +44,21 @@ app.use('/summary', SummaryRouter);
 app.use('/members', MembersRouter);
 app.use('/auth', AuthRouter);
 app.use('/notifications', NotifiationsRouter);
-app.use('/teacher', TeachersRouter);
 app.use('/event', EventRouter);
 app.get('/', (request, response) => {
   response.send('Hello, Hackerman!');
 });
 
 // обрабатываем подключение веб-сокета
-io.use((socket, next) => verifyJwtSocket(socket, next));
-io.use((socket, next) => verifyOfficerRole(socket, next));
-io.on('connection', (socket: Socket) => onConnection(io, socket))
+try {
+  io.use((socket, next) => verifyJwtSocket(socket, next));
+  io.use((socket, next) => verifyOfficerRole(socket, next));
+  io.on('connection', (socket: Socket) => {
+    onConnection(io, socket);
+  })
+} catch (err) {
+  console.log(err);
+}
 
 server.listen(serverConfig);
 

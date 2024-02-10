@@ -2,13 +2,27 @@ import { Request, Response } from 'express'
 import { sequelize } from '../database/database.config';
 import { JwtPayload } from '../middlewares/authJwt';
 import { addEvent, removeEvent, updateEvent } from '../utils/events/events';
-import { Event, Member, User } from '../models';
+import { Event, Member, MemberContact, User } from '../models';
 
 export async function getEventsRequest(req: Request & { jwt: JwtPayload }, res: Response) {
   try {
-    const result = await Event.findAll({ where: { isDeleted: false || null }, include: [{ model: User, attributes: { exclude: ['password'] } }, { model: Member }] });
+    const result = await Event.findAll({ where: { isDeleted: false || null }, include: [{ model: User, attributes: { exclude: ['password'] } }, { model: Member, include: [{model: MemberContact}] }] });
 
     res.status(200).send(result);
+  } catch (error) {
+    res.status(500).send(error);
+  }
+}
+
+export async function getEventRequest(req: Request & { jwt: JwtPayload }, res: Response) {
+  const {id} = req.query;
+  try {
+    if(id){
+      const result = await Event.findOne({ where: { isDeleted: false || null, id: parseInt(id as string) }, include: [{ model: User, attributes: { exclude: ['password'] } }, { model: Member }] });
+      res.status(200).send(result);
+  }else{
+      res.status(404).send();
+    }
   } catch (error) {
     res.status(500).send(error);
   }

@@ -2,7 +2,7 @@ import { Request, Response } from 'express'
 import bcrypt from 'bcrypt';
 import { validateData } from '../utils/validationRules';
 import { sequelize } from '../database/database.config';
-import { TasksDay, TasksWeek, TasksQuarter, Member, MemberLogs, MemberAttendance, MemberContact } from '../models/index';
+import { TasksDay, TasksWeek, TasksQuarter, Member, MemberLogs, MemberAttendance, MemberContact, User } from '../models/index';
 import { JwtPayload } from '../middlewares/authJwt';
 import { changeSummaryStatus, createKidUserSummary, getKidSummary } from '../utils/summary/summary';
 import { addMember, changeMemberStatus, editMember, memberAttendance, removeMember } from '../utils/member/member';

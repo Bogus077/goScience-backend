@@ -26,10 +26,9 @@ import { Notifications } from './Notifications';
 import { UserNotifications } from './UserNotifications';
 import { MemberAttendance } from './MembersAttandance';
 import { MemberContact } from './MemberContact';
-import { Teacher } from './Teacher';
 import { Event } from './Event';
-import { EventTeacher } from './EventTeacher';
 import { EventMember } from './EventMember';
+import { EventUser } from './EventUser';
 
 export {
   User,
@@ -59,10 +58,9 @@ export {
   UserNotifications,
   MemberAttendance,
   MemberContact,
-  Teacher,
   Event,
-  EventTeacher,
   EventMember,
+  EventUser,
 };
 
 User.hasMany(UserRefresh);
@@ -146,8 +144,7 @@ Member.hasMany(MemberContact);
 MemberContact.belongsTo(Member);
 
 //Events
-Event.belongsToMany(Teacher, { through: EventTeacher });
-Teacher.belongsToMany(Event, { through: EventTeacher });
 Event.belongsToMany(Member, { through: EventMember });
 Member.belongsToMany(Event, { through: EventMember });
-
+Event.belongsToMany(User, { through: EventUser });
+User.belongsToMany(Event, { through: EventUser });

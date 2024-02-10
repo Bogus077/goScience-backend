@@ -8,7 +8,8 @@ export class Event extends Model<InferAttributes<Event>, InferCreationAttributes
   declare startAddress: string;
   declare finishAddress: string;
   declare createdBy: ForeignKey<User['id']>;
-  declare createdDate: Date;
+  declare orderDate: Date;
+  declare orderNumber: CreationOptional<number>;
   declare startDate: Date;
   declare isDeleted: CreationOptional<boolean | null>;
 
@@ -44,8 +45,11 @@ Event.init(
       },
       unique: false,
     },
-    createdDate: {
+    orderDate: {
       type: Sequelize.DATE
+    },
+    orderNumber: {
+      type: Sequelize.INTEGER
     },
     startDate: {
       type: Sequelize.DATE

@@ -19,6 +19,19 @@ export const userLoginRules = {
   password: 'string|required',
 }
 
+export const userPasswordChangeRules = {
+  phone: 'string|required',
+  password: 'string|required',
+}
+
+export const updateUserRules = {
+  id: 'integer|required',
+  name: 'string|required',
+  surname: 'string|required',
+  middleName: 'string|required',
+  phone: 'string|required',
+}
+
 export const addRoleRules = {
   name: 'string|required',
 }
@@ -232,8 +245,8 @@ export const addEventRules = {
   title: 'string|required',
   startAddress: 'string|required',
   finishAddress: 'string|required',
-  createdDate: 'integer|required',
-  startDate: 'integer|required',
+  orderDate: 'string|required',
+  startDate: 'string|required',
 }
 
 export const updateEventRules = {
@@ -241,8 +254,8 @@ export const updateEventRules = {
   title: 'string|required',
   startAddress: 'string|required',
   finishAddress: 'string|required',
-  createdDate: 'integer|required',
-  startDate: 'integer|required',
+  orderDate: 'string|required',
+  startDate: 'string|required',
 }
 
 export const removeEventRules = {

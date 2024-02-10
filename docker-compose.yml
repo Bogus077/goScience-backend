@@ -1,15 +1,15 @@
 version: '3.3'
 
 services:
-  nginx:
-    container_name: GS-back-nginx
-    build:
-      context: .
-      dockerfile: docker/nginx.Dockerfile
-    ports:
-      - 3000:3000
-    depends_on:
-      - nodejs
+  # nginx:
+  #   container_name: GS-back-nginx
+  #   build:
+  #     context: .
+  #     dockerfile: docker/nginx.Dockerfile
+  #   ports:
+  #     - 3000:3000
+  #   depends_on:
+  #     - nodejs
   nodejs:
     entrypoint: [sh, -c, 'npm run dev']
     hostname: 'nodejs'
@@ -17,6 +17,8 @@ services:
     build:
       context: .
       dockerfile: docker/node.Dockerfile
+    ports:
+      - 3000:3000
     links:
       - pgdb:pgdb
     volumes:
@@ -28,15 +30,10 @@ services:
     container_name: GS-back-pgdb
     restart: always
     env_file: .env
-    # build:
-    #   context: .
-    #   dockerfile: docker/pg.Dockerfile
     environment:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       POSTGRES_DB: ${POSTGRES_DB}
-    # ports:
-    #   - 5432:5432
     volumes:
       - pgdata:/var/lib/postgresql/data
 

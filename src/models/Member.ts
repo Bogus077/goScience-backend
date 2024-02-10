@@ -5,12 +5,14 @@ export class Member extends Model<InferAttributes<Member>, InferCreationAttribut
   declare id: CreationOptional<number>;
   declare name: string;
   declare surname: string;
+  declare middleName: string;
   declare dob: Date;
   declare sex: string;
   declare plat: number;
   declare status: string;
   declare email: string;
   declare password: string;
+  declare position: string;
   declare isDeleted: CreationOptional<boolean | null>;
 
   // createdAt can be undefined during creation
@@ -33,6 +35,9 @@ Member.init(
     surname: {
       type: Sequelize.STRING,
     },
+    middleName: {
+      type: Sequelize.STRING,
+    },
     dob: {
       allowNull: true,
       type: Sequelize.DATE
@@ -51,6 +56,10 @@ Member.init(
       unique: false,
     },
     password: {
+      type: Sequelize.STRING,
+      unique: false,
+    },
+    position: {
       type: Sequelize.STRING,
       unique: false,
     },

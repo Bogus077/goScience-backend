@@ -3,13 +3,14 @@ import bcrypt from 'bcrypt';
 import { validateData, userSignUpRules } from '../utils/validationRules';
 import { sequelize } from '../database/database.config';
 import { Class, Kid, Role, TasksDay, TasksMonth, TasksQuarter, TasksWeek, User, UserSettings } from '../models/index';
-import { addRoleToUser, checkIsPhoneAlreadyExist, createRole, removeRoleFromUser, signUpNewUser, UserlogIn } from '../utils/user';
+import { addRoleToUser, checkIsPhoneAlreadyExist, createRole, removeRoleFromUser, signUpNewUser, updateUser, userChangePassword, UserlogIn } from '../utils/user';
 import { createRefreshToken, createToken } from '../utils/token';
 import { JwtPayload } from 'src/middlewares/authJwt';
 
 export async function getAllUsersRequest(req: Request & { jwt: JwtPayload }, res: Response) {
   try {
     const result = await User.findAll({
+      where: {isDeleted: false || null as unknown as boolean},
       attributes: { exclude: ['password'] },
       include: [
         { model: Class },
@@ -43,6 +44,8 @@ export async function getUserRequest(req: Request & { jwt: JwtPayload }, res: Re
         { model: Role }
       ]
     });
+
+    // const teachers = await EventTeacher.drop({cascade: true});
 
     if (!result) {
       res.status(401).send({ error: { message: 'User not found', status: 151 } });
@@ -87,7 +90,32 @@ export async function checkIsPhoneAlreadyExistRequest(req: Request, res: Respons
 export async function signInRequest(req: Request, res: Response) {
   try {
     const requestData = req.body;
+
     const result = await UserlogIn(requestData);
+
+    res.status(200).send(result);
+  } catch (error) {
+    res.status(500).send(error);
+  }
+}
+
+export async function updateUserRequest(req: Request, res: Response) {
+  try {
+    const requestData = req.body;
+
+    const result = await updateUser(requestData);
+
+    res.status(200).send(result);
+  } catch (error) {
+    res.status(500).send(error);
+  }
+}
+
+export async function changePasswordRequest(req: Request, res: Response) {
+  try {
+    const requestData = req.body;
+
+    const result = await userChangePassword(requestData);
 
     res.status(200).send(result);
   } catch (error) {
@@ -123,6 +151,21 @@ export async function removeRoleFromUserRequest(req: Request, res: Response) {
     const result = await removeRoleFromUser(requestData);
 
     res.status(200).send(result);
+  } catch (error) {
+    res.status(500).send(error);
+  }
+}
+
+export async function removeUserRequest(req: Request, res: Response) {
+  try {
+    const requestData = req.body;
+    const user = await User.findOne({where: {id: requestData.id}});
+
+    if(user){
+      user.update({isDeleted: true});
+    }
+
+    res.status(200).send(user);
   } catch (error) {
     res.status(500).send(error);
   }
