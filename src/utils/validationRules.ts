@@ -24,6 +24,10 @@ export const userPasswordChangeRules = {
   password: 'string|required',
 }
 
+export const userClearPasswordRules = {
+  phone: 'string|required',
+}
+
 export const updateUserRules = {
   id: 'integer|required',
   name: 'string|required',

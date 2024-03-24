@@ -26,7 +26,7 @@ services:
     extra_hosts:
       - 'smtp.yandex.ru:77.88.21.158'
   pgdb:
-    image: postgres:alpine
+    image: postgres:14-alpine
     container_name: GS-back-pgdb
     restart: always
     env_file: .env
@@ -36,6 +36,28 @@ services:
       POSTGRES_DB: ${POSTGRES_DB}
     volumes:
       - pgdata:/var/lib/postgresql/data
+
+  directus:
+    image: directus/directus:10.10.4
+    ports:
+      - 8056:8055
+    volumes:
+      - ./database:/directus/database
+      - ./uploads:/directus/uploads
+      - ./extensions:/directus/extensions
+    links:
+      - pgdb:pgdb
+    environment:
+      KEY: ${DIRECTUS_KEY}
+      SECRET: ${DIRECTUS_SECRET}
+      ADMIN_EMAIL: "bogus077@gmail.com"
+      ADMIN_PASSWORD: ${DIRECTUS_PASSWORD}
+      DB_CLIENT: pg
+      DB_HOST: ${POSTGRES_HOST}
+      DB_PORT: ${POSTGRES_PORT}
+      DB_DATABASE: ${POSTGRES_DB}
+      DB_USER: ${POSTGRES_USER}
+      DB_PASSWORD: ${POSTGRES_PASSWORD}
 
 volumes:
   pgdata:

@@ -3,20 +3,36 @@ import bcrypt from 'bcrypt';
 import { validateData, userSignUpRules } from '../utils/validationRules';
 import { sequelize } from '../database/database.config';
 import { Class, Kid, Role, TasksDay, TasksMonth, TasksQuarter, TasksWeek, User, UserSettings } from '../models/index';
-import { addRoleToUser, checkIsPhoneAlreadyExist, createRole, removeRoleFromUser, signUpNewUser, updateUser, userChangePassword, UserlogIn } from '../utils/user';
+import { addRoleToUser, checkIsPhoneAlreadyExist, createRole, removeRoleFromUser, signUpNewUser, updateUser, userChangePassword, userClearPassword, UserlogIn } from '../utils/user';
 import { createRefreshToken, createToken } from '../utils/token';
 import { JwtPayload } from 'src/middlewares/authJwt';
+import { Op } from 'sequelize';
 
 export async function getAllUsersRequest(req: Request & { jwt: JwtPayload }, res: Response) {
   try {
     const result = await User.findAll({
-      where: {isDeleted: false || null as unknown as boolean},
+      // where: {isDeleted: false || null as unknown as boolean},
+      where: {
+        [Op.or]: [
+          { isDeleted: false },
+          { isDeleted: null as unknown as boolean }
+        ]
+      },
       attributes: { exclude: ['password'] },
       include: [
         { model: Class },
         { model: Role }
       ],
     });
+
+
+    // const users = await User.findAll({where: {isDeleted: false}});
+    // console.log(users);
+    // if(users && users.length > 0){
+    //   users.forEach(async(user) => {
+    //     user.update({isDeleted: false})
+    //   })
+    // }
 
     res.status(200).send(result);
   } catch (error) {
@@ -92,6 +108,18 @@ export async function signInRequest(req: Request, res: Response) {
     const requestData = req.body;
 
     const result = await UserlogIn(requestData);
+
+    res.status(200).send(result);
+  } catch (error) {
+    res.status(500).send(error);
+  }
+}
+
+export async function clearPasswordRequest(req: Request, res: Response) {
+  try {
+    const requestData = req.body;
+
+    const result = await userClearPassword(requestData);
 
     res.status(200).send(result);
   } catch (error) {

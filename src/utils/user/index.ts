@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import bcrypt from 'bcrypt';
-import { validateData, userSignUpRules, userLoginRules, addRoleRules, addRoleToUserRules, userPasswordChangeRules, updateUserRules } from '../validationRules';
+import { validateData, userSignUpRules, userLoginRules, addRoleRules, addRoleToUserRules, userPasswordChangeRules, updateUserRules, userClearPasswordRules } from '../validationRules';
 import { sequelize } from '../../database/database.config';
 import { User, Class, Role, UserRole } from '../../models/index';
 import { createRefreshToken, createToken } from '../token';
@@ -31,7 +31,14 @@ export const UserlogIn = async (requestData: Request['body']) => {
     throw { errorMessage: 'User not found' };
   }
 
-  await checkPassword(requestData.password, user);
+  // Проверяем, установлен ли пароль пользователя
+  if(user.password === '0'){
+    console.log('User without password login');
+    const newPassword = await bcrypt.hash(requestData.password, 8);
+    await user.update({password: newPassword});
+  }else{
+    await checkPassword(requestData.password, user);
+  }
 
   if(user.isDeleted){
     throw { errorMessage: 'User was deleted' };
@@ -43,6 +50,24 @@ export const UserlogIn = async (requestData: Request['body']) => {
   };
 
   return logInResult;
+}
+
+/** Сбросить пароль */
+export const userClearPassword = async (requestData: Request['body']) => {
+  validateData(requestData, userClearPasswordRules);
+
+  const user = await User.findOne({ where: { phone: requestData.phone } })
+  if (!user) {
+    throw { errorMessage: 'User not found' };
+  }
+
+  if(user.isDeleted){
+    throw { errorMessage: 'User was deleted' };
+  }
+
+  await user.update({password: '0'});
+
+  return {result: 'success'};
 }
 
 /** Change user password */
