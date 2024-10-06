@@ -48,6 +48,15 @@ export async function getUserRequest(req: Request & { jwt: JwtPayload }, res: Re
       include: [
         {
           model: UserSettings,
+          include: [
+            {
+              model: Class,
+              include: [{
+                model: Kid,
+                include: [TasksDay, TasksWeek, TasksMonth, TasksQuarter]
+              }]
+            }
+          ]
           // include: {
           //   model: Class, 
           //   include: {

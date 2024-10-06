@@ -13,6 +13,7 @@ export class Member extends Model<InferAttributes<Member>, InferCreationAttribut
   declare email: string;
   declare password: string;
   declare position: string;
+  declare allergy: string;
   declare isDeleted: CreationOptional<boolean | null>;
 
   // createdAt can be undefined during creation
@@ -60,6 +61,10 @@ Member.init(
       unique: false,
     },
     position: {
+      type: Sequelize.STRING,
+      unique: false,
+    },
+    allergy: {
       type: Sequelize.STRING,
       unique: false,
     },

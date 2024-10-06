@@ -30,7 +30,7 @@ import { Op } from "sequelize";
 
 export const addMember = async (req: Request['body'], UserId: number) => {
   validateData(req, addMemberRules);
-  const { name, surname, middleName, sex, plat, dob, contactName, contactPhone, contactAddress, position } = req;
+  const { name, surname, middleName, sex, plat, dob, contactName, contactPhone, contactAddress, position, allergy } = req;
   const email = `${slugify(`${surname} ${name}`)}@kk-a.ru`
   const newMember = {
     name,
@@ -42,6 +42,7 @@ export const addMember = async (req: Request['body'], UserId: number) => {
     email,
     password: 'kkUnost123',
     position,
+    allergy,
   } as Member
 
   const result = await Member.create(newMember);
@@ -90,7 +91,7 @@ export const changeMemberStatus = async (req: Request['body']) => {
 
 export const editMember = async (req: Request['body'], UserId: number) => {
   validateData(req, editMemberRules);
-  const { id, name, surname, middleName, sex, plat, dob, contactName, contactPhone, contactAddress, email, password, position } = req;
+  const { id, name, surname, middleName, sex, plat, dob, contactName, contactPhone, contactAddress, email, password, position, allergy } = req;
 
   const member = await Member.findOne({ where: { id } });
   if (!member) throw { errorMessage: 'Ученик не найден' };
@@ -105,6 +106,7 @@ export const editMember = async (req: Request['body'], UserId: number) => {
     email,
     password,
     position,
+    allergy,
   };
 
   const result = await member.update(newMember);

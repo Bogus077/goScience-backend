@@ -178,6 +178,7 @@ export const addKidUserSummaryRules = {
 
 export const changeSummaryStatusRules = {
   type: 'string|required',
+  status: 'boolean|required',
 }
 
 //members

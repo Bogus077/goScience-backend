@@ -65,50 +65,54 @@ export const getKidSummary = async (req: Request['body'], UserId: number) => {
   today.setSeconds(0);
   const weekStart = getWeekStart(today);
   const weekEnd = getWeekEnd(today);
+  weekEnd.setDate(weekEnd.getDate() + 1);
 
-  // const result = await UserSettings.findOne({
-  //   where: UserId, 
-  //   include: [{
-  //     model: Class,
-  //       include: [{
-  //         model: Kid,
-  //         include: [{
-  //               model: KidSummaryUser,
-  //               where: { 
-  //                 isDeleted: null,
-  //                 updatedAt: {
-  //                   [Op.between]: [weekStart, weekEnd],
-  //                 }
-  //               },
-  //               required: false,
-  //             },
-  //             {
-  //               model: KidSummaryTask,
-  //               where: {
-  //                 updatedAt: {
-  //                   [Op.between]: [weekStart, weekEnd],
-  //                 }
-  //               },
-  //               required: false,
-  //             },
-  //             {
-  //               model: KidSummaryProjectTask,
-  //               where: {
-  //                 updatedAt: {
-  //                   [Op.between]: [weekStart, weekEnd],
-  //                 }
-  //               },
-  //               required: false,
-  //         }]
-  //       }],
-  //     }],
-  //   order: [
-  //     [Class, Kid, 'surname', 'asc'],
-  //   ]
-  // });
+  const result = await UserSettings.findOne({
+    where: {UserId}, 
+    include: [{
+      model: Class,
+        include: [{
+          model: Kid,
+          include: [{
+                model: KidSummaryUser,
+                where: { 
+                  isDeleted: null,
+                  createdAt: {
+                    [Op.between]: [weekStart, weekEnd],
+                  }
+                },
+                required: false,
+              },
+              {
+                model: KidSummaryTask,
+                where: {
+                  createdAt: {
+                    [Op.between]: [weekStart, weekEnd],
+                  }
+                },
+                required: false,
+              },
+              {
+                model: KidSummaryProjectTask,
+                where: {
+                  createdAt: {
+                    [Op.between]: [weekStart, weekEnd],
+                  }
+                },
+                required: false,
+          }]
+        }],
+      }],
+    order: [
+      [Class, Kid, 'surname', 'asc'],
+    ]
+  });
 
-  // return result.Class.Kids;
+  return (result as UserSettingsWithClassAndKis)?.Class?.Kids;
 }
+
+type UserSettingsWithClassAndKis = UserSettings & {Class: ClassWithKids};
+type ClassWithKids = Class & {Kids: typeof Kid[]};
 
 export const createKidUserSummary = async (req: Request['body'], UserId: number) => {
   validateData(req, addKidUserSummaryRules);
@@ -122,31 +126,31 @@ export const createKidUserSummary = async (req: Request['body'], UserId: number)
 
 export const changeSummaryStatus = async (req: Request['body'], UserId: number) => {
   validateData(req, changeSummaryStatusRules);
-  const { KidSummaryUserId, KidSummaryTaskId, KidSummaryProjectTaskId, type } = req;
+  const { KidSummaryUserId, KidSummaryTaskId, KidSummaryProjectTaskId, type, status } = req;
   if (type !== 'day' && type !== 'week') throw { errorMessage: 'Тип итога может быть только day/week' };
 
   if (KidSummaryUserId) {
     const summary = await isSummaryUserBelongsToUser(UserId, KidSummaryUserId);
     if (type === 'day') {
-      await summary.update({ dayStatus: true });
+      await summary.update({ dayStatus: status });
     } else if (type === 'week') {
-      await summary.update({ weekStatus: true });
+      await summary.update({ weekStatus: status });
     }
     return summary;
   } else if (KidSummaryTaskId) {
     const summary = await isSummaryTaskBelongsToUser(UserId, KidSummaryTaskId);
     if (type === 'day') {
-      await summary.update({ dayStatus: true });
+      await summary.update({ dayStatus: status });
     } else if (type === 'week') {
-      await summary.update({ weekStatus: true });
+      await summary.update({ weekStatus: status });
     }
     return summary;
   } else if (KidSummaryProjectTaskId) {
     const summary = await isSummaryProjectTaskBelongsToUser(UserId, KidSummaryProjectTaskId);
     if (type === 'day') {
-      await summary.update({ dayStatus: true });
+      await summary.update({ dayStatus: status });
     } else if (type === 'week') {
-      await summary.update({ weekStatus: true });
+      await summary.update({ weekStatus: status });
     }
     return summary;
   } else {

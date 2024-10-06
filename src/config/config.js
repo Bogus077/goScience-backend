@@ -20,6 +20,8 @@ const {
   PASS_RESET,
   EMAIL_CONFIRM,
   SUBS_PAGE,
+  OPENAI_API_KEY,
+  OPENAI_API_KEY_Proxy,
 } = process.env;
 
 const serverConfig = { port: PORT, host: HOST, hostUrl: HOST_URL };
@@ -55,4 +57,6 @@ module.exports = {
   jwtExpiryTime,
   refreshExpiryTime,
   mailConfig,
+  openAiKey: OPENAI_API_KEY,
+  OPENAI_API_KEY_Proxy,
 };

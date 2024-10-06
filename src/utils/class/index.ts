@@ -47,29 +47,29 @@ export const changeClass = async (requestData: Request['body'], UserId: number) 
 
 export const getCurrentClass = async (UserId: number) => {
 
-  // const currentClass = await UserSettings.findOne({
-  //   where: UserId,
-  //   include: [{
-  //     model: Class,
-  //     include: [{
-  //       model: Kid,
-  //       include: [
-  //         TasksDay,
-  //         TasksWeek,
-  //         TasksMonth,
-  //         TasksQuarter,
-  //         StatsTask,
-  //       ]
-  //     }]
-  //   }],
-  //   order: [
-  //     [Class, Kid, 'id', 'asc'],
-  //     [Class, Kid, TasksDay, 'id', 'asc'],
-  //     [Class, Kid, TasksWeek, 'id', 'asc'],
-  //     [Class, Kid, TasksMonth, 'id', 'asc'],
-  //     [Class, Kid, TasksQuarter, 'id', 'asc']
-  //   ]
-  // });
+  const currentClass = await UserSettings.findOne({
+    where: {UserId},
+    include: [{
+      model: Class,
+      include: [{
+        model: Kid,
+        include: [
+          TasksDay,
+          TasksWeek,
+          TasksMonth,
+          TasksQuarter,
+          StatsTask,
+        ]
+      }]
+    }],
+    order: [
+      [Class, Kid, 'id', 'asc'],
+      [Class, Kid, TasksDay, 'id', 'asc'],
+      [Class, Kid, TasksWeek, 'id', 'asc'],
+      [Class, Kid, TasksMonth, 'id', 'asc'],
+      [Class, Kid, TasksQuarter, 'id', 'asc']
+    ]
+  });
 
-  // return currentClass;
+  return currentClass;
 }

@@ -7,6 +7,8 @@ import { createToken } from '../utils/token';
 import { changeClass, createNewClass, getCurrentClass } from '../utils/class';
 import { JwtPayload } from '../middlewares/authJwt';
 
+type UserWithClases = User & {Classes: Class[]};
+
 export async function getAllUserClassesRequest(req: Request & { jwt: JwtPayload }, res: Response) {
   try {
     const result = await User.findOne({
@@ -16,12 +18,12 @@ export async function getAllUserClassesRequest(req: Request & { jwt: JwtPayload 
         model: Class,
         include: [{ model: Kid }]
       }],
-      // order: [
-      //   [Class, {model: Kid}, 'id', 'asc']
-      // ]
+      order: [
+        [Class, Kid, 'id', 'asc']
+      ]
     });
 
-    // res.status(200).send(result?.Classes);
+    res.status(200).send((result as UserWithClases)?.Classes);
   } catch (error) {
     res.status(500).send(error);
   }
