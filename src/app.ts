@@ -1,7 +1,7 @@
 'use strict';
 
-import express, { Application, Request, Response } from 'express'
-import { router as UserRouter } from "./routes/user.router";
+import express, { Application, Request, Response } from 'express';
+import { router as UserRouter } from './routes/user.router';
 import { router as ClassRouter } from './routes/class.router';
 import { router as KidRouter } from './routes/kid.router';
 import { router as TasksRouter } from './routes/tasks.router';
@@ -14,16 +14,20 @@ import { router as AuthRouter } from './routes/auth.router';
 import { router as NotifiationsRouter } from './routes/notification.router';
 import { router as EventRouter } from './routes/event.router';
 import { router as HelperRouter } from './routes/helper.router';
+import { router as MarksRouter } from './routes/marks.router';
 import { serverConfig } from './config/config';
 import schedule from 'node-schedule';
 import cors from 'cors';
 import { onConnection } from './utils/socket/connection';
+import cookieParser from 'cookie-parser';
 const app = express();
 import http from 'http';
 const server = http.createServer(app);
-import { Server, Socket } from "socket.io";
+import { Server, Socket } from 'socket.io';
 import { verifyJwtSocket, verifyOfficerRole } from './utils/socket/authHandler';
 import { dailyAttendance } from './utils/member/member';
+import { deleteOldCache } from './utils/helper/helper';
+
 const io = new Server(server, {
   cors: {
     origin: '*',
@@ -33,7 +37,13 @@ const io = new Server(server, {
 });
 
 // app.use(tokenValidation);
-app.use(cors());
+app.use(
+  cors({
+    origin: ['http://localhost:3000', 'https://kk-a.ru'],
+    credentials: true,
+  })
+);
+app.use(cookieParser());
 app.use('/user', UserRouter);
 app.use('/class', ClassRouter);
 app.use('/kid', KidRouter);
@@ -47,6 +57,7 @@ app.use('/auth', AuthRouter);
 app.use('/notifications', NotifiationsRouter);
 app.use('/event', EventRouter);
 app.use('/helper', HelperRouter);
+app.use('/marks', MarksRouter);
 app.get('/', (request, response) => {
   response.send('Hello, Hackerman!');
 });
@@ -57,7 +68,7 @@ try {
   io.use((socket, next) => verifyOfficerRole(socket, next));
   io.on('connection', (socket: Socket) => {
     onConnection(io, socket);
-  })
+  });
 } catch (err) {
   console.log(err);
 }
@@ -70,4 +81,6 @@ const job = schedule.scheduleJob('0 17 * * *', function () {
   dailyAttendance();
 });
 
-
+const job2 = schedule.scheduleJob('0 23 * * *', function () {
+  deleteOldCache();
+});

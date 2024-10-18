@@ -29,6 +29,9 @@ import { MemberContact } from './MemberContact';
 import { Event } from './Event';
 import { EventMember } from './EventMember';
 import { EventUser } from './EventUser';
+import { Marks } from './Marks';
+import { Threads } from './Threads';
+import { OpenAiHash } from './OpenAiHash';
 
 export {
   User,
@@ -61,6 +64,9 @@ export {
   Event,
   EventMember,
   EventUser,
+  Marks,
+  Threads,
+  OpenAiHash,
 };
 
 User.hasMany(UserRefresh);
@@ -148,3 +154,15 @@ Event.belongsToMany(Member, { through: EventMember });
 Member.belongsToMany(Event, { through: EventMember });
 Event.belongsToMany(User, { through: EventUser });
 User.belongsToMany(Event, { through: EventUser });
+
+//Marks
+User.hasMany(Marks);
+Marks.belongsTo(User);
+
+//Threads
+User.hasMany(Threads);
+Threads.belongsTo(User);
+
+//Hash
+User.hasMany(OpenAiHash);
+OpenAiHash.belongsTo(User);

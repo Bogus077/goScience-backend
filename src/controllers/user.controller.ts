@@ -5,7 +5,7 @@ import { sequelize } from '../database/database.config';
 import { Class, Kid, Role, TasksDay, TasksMonth, TasksQuarter, TasksWeek, User, UserSettings } from '../models/index';
 import { addRoleToUser, checkIsPhoneAlreadyExist, createRole, removeRoleFromUser, signUpNewUser, updateUser, userChangePassword, userClearPassword, UserlogIn } from '../utils/user';
 import { createRefreshToken, createToken } from '../utils/token';
-import { JwtPayload } from 'src/middlewares/authJwt';
+import { JwtPayload, setCookie } from '../middlewares/authJwt';
 import { Op } from 'sequelize';
 
 export async function getAllUsersRequest(req: Request & { jwt: JwtPayload }, res: Response) {
@@ -117,6 +117,7 @@ export async function signInRequest(req: Request, res: Response) {
     const requestData = req.body;
 
     const result = await UserlogIn(requestData);
+    setCookie(res, result.accessToken);
 
     res.status(200).send(result);
   } catch (error) {

@@ -3,7 +3,7 @@ import bcrypt from 'bcrypt';
 import { validateData } from '../utils/validationRules';
 import {sequelize} from '../database/database.config';
 import { TasksDay, TasksWeek, TasksQuarter } from '../models/index';
-import { getKidTasks, createTask, changeTaskStatus, removeTask } from '../utils/tasks/tasks';
+import { getKidTasks, createTask, changeTaskStatus, removeTask, addDayToTask } from '../utils/tasks/tasks';
 import { JwtPayload } from '../middlewares/authJwt';
 import { getCurrentClass } from '../utils/class';
 
@@ -50,6 +50,16 @@ export async function createNewMonthTaskRequest(req: Request & {jwt: JwtPayload}
 export async function createNewQuarterTaskRequest(req: Request & {jwt: JwtPayload}, res: Response) {
   try{
     const result = await createTask(req.body, 'quarter', req.jwt.id);
+
+    res.status(200).send(result);
+  }catch(error){
+    res.status(500).send(error);
+  }
+}
+
+export async function addDayToTaskRequest(req: Request & {jwt: JwtPayload}, res: Response) {
+  try{
+    const result = await addDayToTask(req.body, req.jwt.id);
 
     res.status(200).send(result);
   }catch(error){

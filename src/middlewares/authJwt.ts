@@ -6,18 +6,37 @@ import { jwtSecret } from '../config/config';
 
 export type JwtPayload = { id: number, iat: number, exp: number };
 
+export const setCookie = (res: Response, token: string) => {
+  res.cookie('accessToken', token, {
+    secure: true,
+    httpOnly: true,
+    sameSite: 'none',
+  });
+}
+
 export const verifyJWT = (req: Request & {jwt: JwtPayload}, res: Response, next: NextFunction) => {
   const bearerHeader = req.headers.authorization;
-  if (!bearerHeader) {
+  const tokenCookie = req.cookies?.accessToken;
+  let bearerToken: string | null = null;
+
+  if (!bearerHeader && !tokenCookie) {
     res.status(403).send({ message: `Token required!` }); 
     return;
   };
 
-  const bearer = bearerHeader.split(' ');
-  const bearerToken = bearer[1];
+  if(bearerHeader){
+    const bearer = bearerHeader.split(' ');
+     bearerToken = bearer[1];
+  }else{
+    bearerToken = tokenCookie;
+  }
+
   const secret = jwtSecret as Secret | GetPublicKeyOrSecret;
 
-  jwt.verify(bearerToken, secret, (err, decoded) => {
+  // TODO:Удалить
+  setCookie(res, bearerToken as string);
+
+  jwt.verify(bearerToken as string, secret, (err, decoded) => {
     if (err) {
       res.status(401).send({ message: `Invalid token!`, error: err });
       return;
